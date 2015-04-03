@@ -50,7 +50,7 @@ make_command_stream (int (*get_next_byte) (void *),
   int sizeTotal=1024;
   char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
   int index=0;
-  while(1)
+  while(1) //change this to postfix transform
   {
     c=get_next_byte(get_next_byte_argument);
     if(c==EOF)
@@ -69,6 +69,7 @@ make_command_stream (int (*get_next_byte) (void *),
       }
     }
   }
+
   //make array of command trees
   //run each command tree through postfix implementation
   error (1, 0, "command reading not yet implemented");
