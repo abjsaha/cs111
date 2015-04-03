@@ -2,7 +2,7 @@
 
 #include "command.h"
 #include "command-internals.h"
-
+#include <stdio.h>
 #include <error.h>
 
 /* FIXME: You may need to add #include directives, macro definitions,
@@ -44,9 +44,33 @@ make_command_stream (int (*get_next_byte) (void *),
   /* FIXME: Replace this with your implementation.  You may need to
      add auxiliary functions and otherwise modify the source code.
      You can also use external functions defined in the GNU C Library.  */
-  int c = (*get_next_byte)(get_next_byte_argument);
+  int c;
   //char** tokens = (char**) checked_malloc(CMD_SIZE * sizeof(char*));
   //tokens[0] = (char*) checked_malloc(WORD_SIZE);
+  int sizeTotal=1024;
+  char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
+  int index=0;
+  while(1)
+  {
+    c=get_next_byte(get_next_byte_argument);
+    if(c==EOF)
+    {
+      break;
+    }
+    entireStream[index++]=(char)c;
+    if(index==sizeTotal)
+    {
+      sizeTotal*=2;
+      entireStream=(char*)realloc(entireStream,sizeTotal);
+      if(entireStream==NULL)
+      {
+        fprintf(stderr, "Error in re-allocationg dynamic memory");
+        exit(1);
+      }
+    }
+  }
+  //make array of command trees
+  //run each command tree through postfix implementation
   error (1, 0, "command reading not yet implemented");
   return 0;
 }
