@@ -26,8 +26,42 @@ parse script from left to right
 */
 
 //initialize empty operator and command stacks
-charStack opstack, comstack;
-initStack(&opstack, 2048);
-initStack(&comstack, 2048);
+charStack cstack;
+opStack ostack;
+ostack.initStack(&ostack, 2048);
+cstack.initStack(&cstack, 2048);
+
+//initialize commands and operators as we iterate from left to right
+//should we define a data struct for an operator? not sure if this is necessary
+//it would have a c string and a higherPresThan function to compare presedence with other operators
+
+//for now just define separate function higherPresThan to compare two c strings (operators)
+//returns true if the first operator has a lower presedence than the second operator
+bool lowerPresThan(&char cur[], &char other[]){
+	if (cur == ";")
+		return true;
+	if (cur == "&&" || cur == "||"){
+
+	}
+}
+
+//if current thing is a command:
+//initialize the command
+command com;
+//set the fields of the command...
+//decide what to do with the command 
+if (com.type == SIMPLE_COMMAND)
+	cstack.push(&cstack, com);
+
+//if current thing is an operator
+//initialize the operator
+char op[];
+//decide what to do with the operator
+if (op == "(" || ostack.isEmpty(&ostack))
+	ostack.push(&ostack, op);
+
+
+
+
 
 
