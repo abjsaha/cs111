@@ -25,8 +25,17 @@ void execute_command (command_t, bool);
    been executed.  Wait for the command, if it is not already finished.  */
 int command_status (command_t);
 
+<<<<<<< HEAD
 typedef struct operator{
 	int precedence;
 	char* data;
 };
 
+=======
+// Definition of command_stream which is a linked list of tree(commandNode)
+typedef struct command_stream
+{
+  struct commandNode* head;
+  struct commandNode* tail;
+};
+>>>>>>> e13f54f490b42808858525521d4103620460b5b2

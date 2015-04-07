@@ -4,7 +4,9 @@
 #include "command-internals.h"
 #include <stdio.h>
 #include <error.h>
-
+const int PRECEDENCE_SEMI_NEWLINE=1;
+const int PRECEDENCE_AND_OR=2;
+const int PRECEDENCE_PIPE=3;
 /* FIXME: You may need to add #include directives, macro definitions,
    static function definitions, etc.  */
 
@@ -21,17 +23,17 @@ typedef struct command_stream
   struct commandNode* head;
   struct commandNode* tail;
 };
-typedef nodeStack
+typedef struct opStack
 {
-  char* data;
-  nodeStack* next;
+  operator* data;
+  opStack* next;
 };
-nodeStack pop(nodeStack current)
+opStack pop(opStack current)
 {
   current=current->next;
   return current;
 }
-nodeStack push(nodeStack current,nodeStack head)
+opStack push(opStack current, opStack head)
 {
   current->next=head;
   head=current;
@@ -80,6 +82,6 @@ command_t
 read_command_stream (command_stream_t s)
 {
   /* FIXME: Replace this with your implementation too.  */
-  error (1, 0, "command reading not yet implemented");
-  return 0;
+  //error (1, 0, "command reading not yet implemented");
+  //return 0;
 }
