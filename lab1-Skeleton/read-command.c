@@ -34,7 +34,7 @@ opStackNode* pop(opStackNode* current)
   current=current->next;
   return tmp;
 }
-opStackNode* push(opStackNode* current, opStackNode* head)
+void push(opStackNode* current, opStackNode* head)
 {
   current->next=head;
   head=current;
@@ -51,7 +51,7 @@ comStackNode* pop(comStackNode* cur)
   cur=cur->next;
   return tmp;
 }
-comStackNode* push(comStackNode* cur, comStackNode* head)
+void push(comStackNode* cur, comStackNode* head)
 {
   cur->next=head;
   head=cur;
@@ -123,16 +123,19 @@ command_stream_t;
 - if < or >, simply pop top command, set input or output field to character after < or >, push back on
 */
 
+
+
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
   if (newTreeFlg){
     //add tree to stream
     //clear stacks
-  }
+
   else{
     operator curOp;
     command curCom;
     opStackNode* opNode;
     comStackNode* comNode;
+
     //determine if tmp is an operator
     //if it is an operator, set fields of curOp
     if (*tmp == "("){
@@ -143,37 +146,106 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
       push(opNode, opStackHead);
     }
     else if (*tmp == ")"){
-      //pop and combine until matching (
+      //while not matching (
+      while (opStackHead->data.data != "(")
+        //pop and combine shit
+        popAndCombine();
+      //create subshell command and push it to command stack
+      curCom.type = SUBSHELL_COMMAND;
+      curCom.subshell_command = opStackHead->data; //pop here before setting subshell_cmd?
+      comNode->data = curCom;
+      comNode->next = null;
+      push(comNode, comStackHead);
+
     }
     else if (*tmp == "|"){
       curOp.data = tmp;
       curOp.precedence = PRECEDENCE_PIPE;
       opNode->data = curOp;
       opNode->next = null;
-      if (opStackHead->next == null)
-        push(opNode, opStackHead);
-      else //op stack is not empty
-        //pop and combine shit
+      if (opStackHead->next != null){
+        //if op stack is not empty
+        //while next operator on stack has greater or equal precedence than tmp
+        while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
+         //pop and combine shit
+         popAndCombine();
+      }
+      push(opNode, opStackHead);
+      }  
     }
     else if (*tmp == "||" || *tmp == "&&"){
       curOp.data = tmp;
       curOp.precedence = PRECEDENCE_AND_OR;
       opNode->data = curOp;
       opNode->next = null;
-      if (opStackHead->next == null)
-        push(opNode, opStackHead);
-      else //op stack is not empty
-        //pop and combine shit
+      if (opStackHead->next != null){
+        //if op stack is not empty
+        //while next operator on stack has greater or equal precedence than tmp
+        while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
+          //pop and combine shit
+          popAndCombine();
+      }
+      push(opNode, opStackHead);
+      }  
     }
     else if (*tmp == ";") {
       curOp.data = tmp;
       curOp.precedence = PRECEDENCE_SEMI_NEWLINE;
       opNode->data = curOp;
       opNode->next = null;
-      if (opStackHead->next == null)
-        push(opNode, opStackHead);
-      else //op stack is not empty
-        // pop and combine shit
+      if (opStackHead->next != null){
+        //if op stack is not empty
+        //while next operator on stack has greater or equal precedence than tmp
+        while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
+         //pop and combine shit
+         popAndCombine();
+      }
+      push(opNode, opStackHead);
+      }  
+    }
+
+    //tmp is a simple command
+    else {
+      if (inputFlg){
+        //set tmp as the input of the top of command stack then push it back on command stack
+        comNode = pop(comStackHead); //pointers are confusing :( i dont think i did this right
+        comNode.data->input = tmp; //pointers suck
+        push(comNode, comStackHead);
+      }
+      else if (outputFlg){
+        //set tmp as output of the top of command stack then push it back on command stack
+        comNode = pop(comStackHead); //pointers are confusing :( i dont think i did this right
+        comNode.data->output = tmp; //pointers suck
+      }
+      else{
+        //initialize command and push on command stack
+        curCom.type = SIMPLE_COMMAND;
+        //initialize command's words
+        comNode->data = curCom;
+        comNode->next = null;
+        //push onto command stack
+        push(comNode, comStackHead);
+      }
     }
   }
+}
+
+
+popAndCombine(){
+  //define command type
+  if (curOp.data == "|")
+    curCom.type = PIPE_COMMAND;
+  if (curOp.data == "||") 
+    curCom.type = OR_COMMAND;
+  if (curOp.data == "&&")
+    curCom.type = AND_COMMAND;
+  if (curOp.data == ";")
+    curCom.type = SEQUENCE_COMMAND;
+  //pop two commands and combine them to be a new command
+    curCom.command[0] = pop(comStackHead)->data;
+    curCom.command[1] = pop(comStackHead)->data;
+  //push new combined command onto command stack
+    comNode->data = curCom;
+    comNode->next = null;
+    push(comNode, comStackHead);
 }
