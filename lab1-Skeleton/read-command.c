@@ -23,22 +23,40 @@ typedef struct command_stream
   struct commandNode* head;
   struct commandNode* tail;
 };
-typedef struct opStack
+typedef struct opStackNode
 {
   operator* data;
-  opStack* next;
+  opStackNode* next;
 };
-opStack pop(opStack current)
+opStackNode* pop(opStackNode* current)
 {
+  opStackNode* tmp = cur;
   current=current->next;
-  return current;
+  return tmp;
 }
-opStack push(opStack current, opStack head)
+opStackNode* push(opStackNode* current, opStackNode* head)
 {
   current->next=head;
   head=current;
-  return head;
 }
+
+typedef struct comStackNode
+{
+  command* data;
+  comStackNode* next;
+};
+comStackNode* pop(comStackNode* cur)
+{
+  opStackNode* tmp = cur;
+  cur=cur->next;
+  return tmp;
+}
+comStackNode* push(comStackNode* cur, comStackNode* head)
+{
+  cur->next=head;
+  head=cur;
+}
+
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
 		     void *get_next_byte_argument)
@@ -84,4 +102,78 @@ read_command_stream (command_stream_t s)
   /* FIXME: Replace this with your implementation too.  */
   //error (1, 0, "command reading not yet implemented");
   //return 0;
+}
+
+opStackNode* opStackHead = null;
+comStackNode* comStackHead = null;
+command_stream_t;
+//example: push(tmp, opStackHead);
+
+/* PSUEDO CODE
+- if simple command, push onto command stack
+- if (, push onto operator stack
+- if operator and operator stack is empty, push the operator onto the operator stack
+- if operator and operator stack is not empty, pop all operators with greater/equal precedence off of the operator stack
+  * for each operator, pop two commands off command stack
+    combine into new command and push it on command stack
+  * stop when reach an operator with lower precedence or a (
+  * push new operator onto operator stack
+- if ), pop operators off until matching (
+  * create subshell command by popping off top command on command stack
+- if < or >, simply pop top command, set input or output field to character after < or >, push back on
+*/
+
+void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
+  if (newTreeFlg){
+    //add tree to stream
+    //clear stacks
+  }
+  else{
+    operator curOp;
+    command curCom;
+    opStackNode* opNode;
+    comStackNode* comNode;
+    //determine if tmp is an operator
+    //if it is an operator, set fields of curOp
+    if (*tmp == "("){
+      curOp.data = tmp;
+      curOp.precedence = 0;
+      opNode->data = curOp;
+      opNode->next = null;
+      push(opNode, opStackHead);
+    }
+    else if (*tmp == ")"){
+      //pop and combine until matching (
+    }
+    else if (*tmp == "|"){
+      curOp.data = tmp;
+      curOp.precedence = PRECEDENCE_PIPE;
+      opNode->data = curOp;
+      opNode->next = null;
+      if (opStackHead->next == null)
+        push(opNode, opStackHead);
+      else //op stack is not empty
+        //pop and combine shit
+    }
+    else if (*tmp == "||" || *tmp == "&&"){
+      curOp.data = tmp;
+      curOp.precedence = PRECEDENCE_AND_OR;
+      opNode->data = curOp;
+      opNode->next = null;
+      if (opStackHead->next == null)
+        push(opNode, opStackHead);
+      else //op stack is not empty
+        //pop and combine shit
+    }
+    else if (*tmp == ";") {
+      curOp.data = tmp;
+      curOp.precedence = PRECEDENCE_SEMI_NEWLINE;
+      opNode->data = curOp;
+      opNode->next = null;
+      if (opStackHead->next == null)
+        push(opNode, opStackHead);
+      else //op stack is not empty
+        // pop and combine shit
+    }
+  }
 }
