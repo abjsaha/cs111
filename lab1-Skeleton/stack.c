@@ -35,14 +35,16 @@ cstack.initStack(&cstack, 2048);
 //should we define a data struct for an operator? not sure if this is necessary
 //it would have a c string and a higherPresThan function to compare presedence with other operators
 
-//for now just define separate function higherPresThan to compare two c strings (operators)
-//returns true if the first operator has a lower presedence than the second operator
-bool lowerPresThan(&char cur[], &char other[]){
-	if (cur == ";")
+//for now just define separate function to compare presedence of two operators
+//returns true if the other operator has a higher or equal presedence than the cur operator
+bool shouldPop(&char curOp[], &char otherOp[]){
+	if (curOp == ";")
 		return true;
-	if (cur == "&&" || cur == "||"){
-
+	if (curOp == "&&" || curOp == "||"){
+		if (otherOp == ";")
 	}
+	if (curOp == "|")
+		return false;
 }
 
 //if current thing is a command:
