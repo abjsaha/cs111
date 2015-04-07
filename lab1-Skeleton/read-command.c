@@ -53,7 +53,7 @@ make_command_stream (int (*get_next_byte) (void *),
   int sizeTotal=1024;
   char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
   int index=0;
-  char prev;
+  char prev=' ';
   while(1) //change this to postfix transform
   {
     c=get_next_byte(get_next_byte_argument);
@@ -63,7 +63,10 @@ make_command_stream (int (*get_next_byte) (void *),
     }
     if(index==0)
     {
-      prev=handleCharacter(c,'-',index); 
+      prev=handleCharacter(c,'-',index);
+      if(prev==';')
+        prev=' ';
+      index=0;
     }
     else
     {
@@ -88,7 +91,11 @@ make_command_stream (int (*get_next_byte) (void *),
   error (1, 0, "command reading not yet implemented");
   return 0;
 }
-
+void realloc()
+{
+  reallocSize*=2;
+  tempArray=(char*)realloc(tempArray,sizeTotal);
+}
 command_t
 read_command_stream (command_stream_t s)
 {
@@ -96,83 +103,224 @@ read_command_stream (command_stream_t s)
   //error (1, 0, "command reading not yet implemented");
   //return 0;
 }
+int reallocSize=1024;
+int globalFlg=0;
 int reallocCheck=0;
+int twoConsNewLines=0;
 char* tempArray=(char*)malloc(sizeof(char)*1024);
 char handleCharacter(char c, char prev, int flgFirst)
 {
-  if(c=='>')
+  if(c=='>')//>
   {
+    if(prev=='\n')//\n >
+    {
+      twoConsNewLines=0;
+      globalFlg=0;
+      return c;
+    }
     return c;
   }
-  if(c=='<')
+  if(c=='<')//<
   {
+    if(prev=='\n')//\n <
+    {
+      twoConsNewLines=0;
+      globalFlg=0;
+      return c;
+    }
     return c;
   }
   if(flgFirst!=0)
   {
-    if(c!=';'||c!='|'||c!='&'||c!='('||c!=')'||c!='<'||c!='>'||c!='\n')
+    if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
     {
-      if(prev!=';'||prev!='|'||prev!='&'||prev!='('||prev!=')'||prev!='<'||prev!='>'||prev!='\n')
+      if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')//if current is not a special character and previous is not a special character
       {
         temp[reallocCheck++]=c;
         //realloc
+        if(reallocCheck==reallocSize)
+        {
+          realloc();
+        }
         return c;
       }
-      else
+      else if(prev=='\n')//\n a
       {
-        if(prev=='>')
+        if(globalFlg)//a \n b or a \n \n b
         {
-          growTree(temp, 0,0,1);
-          memset(temp,0,strlen(temp));
+          if(twoConsNewLines)// a \n \n b
+          {
+            growTree(tempArray, 1,0,0);
+            memset(tempArray,0,strlen(tempArray));
+            reallocCheck=0;
+            if(reallocCheck==reallocSize)
+            {
+              realloc();
+            }
+            tempArray[reallocCheck++]=c;
+            return c;
+          }
+          else//a \n b
+          {
+            growTree(tempArray, 0,0,0);
+            memset(tempArray,0,strlen(tempArray));
+            reallocCheck=0;
+            if(reallocCheck==reallocSize)
+            { 
+              realloc();
+            }
+            tempArray[reallocCheck++]=';';
+            return c;          
+          }
+        }
+        else//| \n a or | \n \n a
+        {
+          if (twoConsNewLines)//| \n a
+          {
+            error (1, 0, "command reading not yet implemented");
+            exit(0);
+          }
+          else//| \n \n a
+          {
+            twoConsNewLines=0;
+            growTree(tempArray, 0,0,0);
+            memset(tempArray,0,strlen(tempArray));
+            reallocCheck=0;
+            if(reallocCheck==reallocSize)
+            { 
+              realloc();
+            }
+            tempArray[reallocCheck++]=c;
+            return c; 
+          }
+        }
+      }
+      else//if current is not special character and previous is a special character
+      {
+        if(prev=='>')//> a
+        {
+          growTree(tempArray, 0,0,1);
+          memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          temp[reallocCheck++]=c;
+          if(reallocCheck==reallocSize)
+          { 
+            realloc();
+          }
+          tempArray[reallocCheck++]=c;
           //realloc
           return c;
         }
-        else if(prev=='<')
+        else if(prev=='<')//< a
         {
-          growTree(temp, 0,1,0);
-          memset(temp,0,strlen(temp));
+          growTree(tempArray, 0,1,0);
+          memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          temp[reallocCheck++]=c;
-          //realloc
+          if(reallocCheck==reallocSize)
+            { 
+              realloc();
+            }
+          tempArray[reallocCheck++]=c;
           return c;
         }
-        else
+        else//| a
         {
-          growTree(temp, 0,0,0);
-          memset(temp,0,strlen(temp));
+          growTree(tempArray, 0,0,0);
+          memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          temp[reallocCheck++]=c;
+          tempArray[reallocCheck++]=c;
           //realloc
           return c;
         }
       }
     }
-    else
+    else//if current is a special character
     {
+      
       //if current is a special character and previous is not
-      if(prev!=';'||prev!='|'||prev!='&'||prev!='('||prev!=')'||prev!='<'||prev!='>'||prev!='\n')
+      if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
       {
-          growTree(temp, 0,0,0);
-          memset(temp,0,strlen(temp));
-          reallocCheck=0;
-          temp[reallocCheck++]=c;
-          //realloc
-          return c;
-      }
-      else //if current is a special character and previous is a special character
-      {
-        if((c=='|'&&prev=='|')||(c=='&'&&prev=='&'))
+        if(c=='\n') //a \n
         {
-          temp[reallocCheck++]=c;
+          globalFlg=1;
+          return c;
+        }
+        else//a |
+        {
+          growTree(tempArray, 0,0,0);
+          memset(tempArray,0,strlen(tempArray));
+          reallocCheck=0;
+          tempArray[reallocCheck++]=c;
           //realloc
           return c;
         }
-        else
+      }
+      else //if current is a special character and previous is a special character
+      {
+        if(c=='\n'&&prev!='\n')//| \n
         {
-          error (1, 0, "command reading not yet implemented");
-          exit(0);
+          globalFlg=0;
+
+          return c;
+        }
+        else if(c=='\n'&&prev=='\n')//\n \n
+        {
+          twoConsNewLines=1;
+          if(globalFlg)
+          {
+            return c;
+          }
+          else
+          {
+            return c;
+          }
+        }
+        else if((c=='|'&&prev=='|')||(c=='&'&&prev=='&'))//|| or &&
+        {
+          tempArray[reallocCheck++]=c;
+          //realloc
+          return c;
+        }
+        else//
+        {
+          if(prev=='\n')//\n |
+          {
+            if(twoConsNewLines)//a \n \n | or | \n \n ;
+            {
+              if(globalFlg)//a \n \n |
+              {
+                tempArray[reallocCheck++]=c;
+                //realloc
+                return c;
+              }
+              else//| \n \n ;
+              {
+                error (1, 0, "command reading not yet implemented");
+                exit(0);
+              }
+            }
+            else//a \n | or | \n ;
+            {
+              if (globalFlg)//a \n |
+              {
+                growTree(tempArray, 0,0,0);
+                memset(tempArray,0,strlen(tempArray));
+                reallocCheck=0;
+                tempArray[reallocCheck++]=c;
+                //realloc
+                return c;
+              }
+              else//| \n ;
+              {
+                error (1, 0, "command reading not yet implemented");
+                exit(0);
+              }
+            }
+          }
+          else//| ;
+          {
+            error (1, 0, "command reading not yet implemented");
+            exit(0);
+          }
         }
       }
     }
@@ -180,7 +328,19 @@ char handleCharacter(char c, char prev, int flgFirst)
   else
   {
     if(c=='\n')
+    {
       c=';';
-    temp[reallocCheck++]=c;
+      return c;
+    }
+    else if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
+    {
+      tempArray[reallocCheck++]=c;
+      return c;
+    }
+    else
+    {
+      error (1, 0, "command reading not yet implemented");
+      exit(0);
+    }
   }
 }
