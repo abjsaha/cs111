@@ -1,25 +1,28 @@
-// UCLA CS 111 Lab 1 command reading
 
+// UCLA CS 111 Lab 1 command reading
+#include <string.h>
 #include "command.h"
 #include "command-internals.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <error.h>
-const int PRECEDENCE_SEMI_NEWLINE=1;
-const int PRECEDENCE_AND_OR=2;
-const int PRECEDENCE_PIPE=3;
+#define PRECEDENCE_SEMI_NEWLINE 1
+#define PRECEDENCE_AND_OR 2
+#define PRECEDENCE_PIPE 3
+#define INITIAL_SIZE 1024
 /* FIXME: You may need to add #include directives, macro definitions,
    static function definitions, etc.  */
 
 /* FIXME: Define the type 'struct command_stream' here.  This should
    complete the incomplete type declaration in command.h.  */
-typedef commandNode
+/*typedef commandNode
 {
   struct command* command; //root of tree
   struct commandNode* next;
 };
 typedef struct command_stream
 {
-  /* data */
+  
   struct commandNode* head;
   struct commandNode* tail;
 };
@@ -39,7 +42,11 @@ opStackNode push(opStackNode current, opStackNode head)
   current->next=head;
   head=current;
   return head;
-}
+  }*/
+char handleCharacter(char c, char prev, int flgFirst);
+void reallocate();
+void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg);
+char* tempArray;
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
 		     void *get_next_byte_argument)
@@ -51,26 +58,35 @@ make_command_stream (int (*get_next_byte) (void *),
   //char** tokens = (char**) checked_malloc(CMD_SIZE * sizeof(char*));
   //tokens[0] = (char*) checked_malloc(WORD_SIZE);
   int sizeTotal=1024;
-  char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
+  tempArray=(char*)malloc(sizeof(char)*INITIAL_SIZE);
+  
+  //char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
   int index=0;
   char prev=' ';
   while(1) //change this to postfix transform
   {
     c=get_next_byte(get_next_byte_argument);
+    printf("\n Next byte is %c",c);
     if(c==EOF)
     {
+      growTree(tempArray,0,0,0);
+      printf("\n reached end of file.");
       break;
     }
     if(index==0)
     {
       prev=handleCharacter(c,'-',index);
+      printf("\n Previous charcter is %c",prev);
       if(prev==';')
-        prev=' ';
-      index=0;
+      {
+	prev=' ';
+	index=0;
+      }
     }
     else
     {
       prev=handleCharacter(c,prev,index);
+      printf("\n Previous charcter is %c",prev);
     }
     index++;
     /*entireStream[index++]=(char)c;
@@ -85,29 +101,23 @@ make_command_stream (int (*get_next_byte) (void *),
       }
     }*/
   }
-
+  //growTree(tempArray,0,0,0);
   //make array of command trees
   //run each command tree through postfix implementation
-  error (1, 0, "command reading not yet implemented");
+  //error (1, 0, "command reading not yet implemented");
   return 0;
-}
-void realloc()
-{
-  reallocSize*=2;
-  tempArray=(char*)realloc(tempArray,sizeTotal);
 }
 command_t
 read_command_stream (command_stream_t s)
 {
   /* FIXME: Replace this with your implementation too.  */
   //error (1, 0, "command reading not yet implemented");
-  //return 0;
+  return 0;
 }
 int reallocSize=1024;
 int globalFlg=0;
 int reallocCheck=0;
 int twoConsNewLines=0;
-char* tempArray=(char*)malloc(sizeof(char)*1024);
 char handleCharacter(char c, char prev, int flgFirst)
 {
   if(c=='>')//>
@@ -136,11 +146,11 @@ char handleCharacter(char c, char prev, int flgFirst)
     {
       if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')//if current is not a special character and previous is not a special character
       {
-        temp[reallocCheck++]=c;
+        tempArray[reallocCheck++]=c;
         //realloc
         if(reallocCheck==reallocSize)
         {
-          realloc();
+          reallocate();
         }
         return c;
       }
@@ -153,10 +163,7 @@ char handleCharacter(char c, char prev, int flgFirst)
             growTree(tempArray, 1,0,0);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
-            if(reallocCheck==reallocSize)
-            {
-              realloc();
-            }
+              reallocate();
             tempArray[reallocCheck++]=c;
             return c;
           }
@@ -165,10 +172,7 @@ char handleCharacter(char c, char prev, int flgFirst)
             growTree(tempArray, 0,0,0);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
-            if(reallocCheck==reallocSize)
-            { 
-              realloc();
-            }
+              reallocate();
             tempArray[reallocCheck++]=';';
             return c;          
           }
@@ -186,10 +190,7 @@ char handleCharacter(char c, char prev, int flgFirst)
             growTree(tempArray, 0,0,0);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
-            if(reallocCheck==reallocSize)
-            { 
-              realloc();
-            }
+              reallocate();
             tempArray[reallocCheck++]=c;
             return c; 
           }
@@ -201,11 +202,9 @@ char handleCharacter(char c, char prev, int flgFirst)
         {
           growTree(tempArray, 0,0,1);
           memset(tempArray,0,strlen(tempArray));
-          reallocCheck=0;
-          if(reallocCheck==reallocSize)
-          { 
-            realloc();
-          }
+          reallocCheck=0; 
+            reallocate();
+          
           tempArray[reallocCheck++]=c;
           //realloc
           return c;
@@ -214,11 +213,9 @@ char handleCharacter(char c, char prev, int flgFirst)
         {
           growTree(tempArray, 0,1,0);
           memset(tempArray,0,strlen(tempArray));
-          reallocCheck=0;
-          if(reallocCheck==reallocSize)
-            { 
-              realloc();
-            }
+          reallocCheck=0; 
+              reallocate();
+            
           tempArray[reallocCheck++]=c;
           return c;
         }
@@ -227,6 +224,8 @@ char handleCharacter(char c, char prev, int flgFirst)
           growTree(tempArray, 0,0,0);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
+	    reallocate();
+	  
           tempArray[reallocCheck++]=c;
           //realloc
           return c;
@@ -249,6 +248,9 @@ char handleCharacter(char c, char prev, int flgFirst)
           growTree(tempArray, 0,0,0);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
+            reallocate();
+          
+
           tempArray[reallocCheck++]=c;
           //realloc
           return c;
@@ -276,6 +278,11 @@ char handleCharacter(char c, char prev, int flgFirst)
         }
         else if((c=='|'&&prev=='|')||(c=='&'&&prev=='&'))//|| or &&
         {
+	  if(reallocCheck==reallocSize)
+          {
+            reallocate();
+          }
+
           tempArray[reallocCheck++]=c;
           //realloc
           return c;
@@ -288,6 +295,11 @@ char handleCharacter(char c, char prev, int flgFirst)
             {
               if(globalFlg)//a \n \n |
               {
+	      if(reallocCheck==reallocSize)
+	      {
+	      reallocate();
+	      }
+
                 tempArray[reallocCheck++]=c;
                 //realloc
                 return c;
@@ -305,6 +317,7 @@ char handleCharacter(char c, char prev, int flgFirst)
                 growTree(tempArray, 0,0,0);
                 memset(tempArray,0,strlen(tempArray));
                 reallocCheck=0;
+		reallocate();
                 tempArray[reallocCheck++]=c;
                 //realloc
                 return c;
@@ -334,6 +347,11 @@ char handleCharacter(char c, char prev, int flgFirst)
     }
     else if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
     {
+      if(reallocCheck==reallocSize)
+	{
+	  reallocate();
+	}
+      
       tempArray[reallocCheck++]=c;
       return c;
     }
@@ -343,4 +361,15 @@ char handleCharacter(char c, char prev, int flgFirst)
       exit(0);
     }
   }
+}
+
+
+void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
+{
+  printf("\nTemp is %s",tmp);
+}
+void reallocate()
+{
+  reallocSize*=2;
+  tempArray=(char*)realloc(tempArray,reallocSize);
 }
