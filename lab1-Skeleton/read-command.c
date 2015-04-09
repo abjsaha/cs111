@@ -47,6 +47,8 @@ opStackNode push(opStackNode current, opStackNode head)
   void reallocate();
   void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg);
   char* tempArray;
+  int globalFlg=0;
+  int twoConsNewLines=0;
   command_stream_t
   make_command_stream (int (*get_next_byte) (void *),
    void *get_next_byte_argument)
@@ -124,9 +126,7 @@ opStackNode push(opStackNode current, opStackNode head)
     return 0;
   }
   int reallocSize=1024;
-  int globalFlg=0;
   int reallocCheck=0;
-  int twoConsNewLines=0;
   int outputGlobalFlag=0;
   int inputGlobalFlag=0;
   int inputGlobalFlag2=0;
@@ -325,7 +325,7 @@ opStackNode push(opStackNode current, opStackNode head)
                {
                  reallocate();
                }
-              globalFlg=0;
+               globalFlg=0;
                tempArray[reallocCheck++]=c;
                 //realloc
                return c;
