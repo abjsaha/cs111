@@ -26,16 +26,4 @@ void execute_command (command_t, bool);
 int command_status (command_t);
 
 
-typedef struct operator{
-	int precedence;
-	char* data;
-};
-
-
-// Definition of command_stream which is a linked list of tree(commandNode)
-typedef struct command_stream
-{
-  struct commandNode* head;
-  struct commandNode* tail;
-};
 

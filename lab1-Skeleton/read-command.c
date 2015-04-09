@@ -15,7 +15,11 @@
 
 /* FIXME: Define the type 'struct command_stream' here.  This should
  complete the incomplete type declaration in command.h.  */
-typedef commandNode
+typedef struct operator{
+  int precedence;
+  char* data;
+};
+typedef struct commandNode
 {
 struct command* command; //root of tree
 struct commandNode* next;
