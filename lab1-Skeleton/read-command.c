@@ -118,10 +118,13 @@ int reallocSize=1024;
 int globalFlg=0;
 int reallocCheck=0;
 int twoConsNewLines=0;
+int outputGlobalFlag=0;
+int inputGlobalFlag=0;
 char handleCharacter(char c, char prev, int flgFirst)
 {
   if(c=='>')//>
   {
+    outputGlobalFlag=1;
     if(prev=='\n')//\n >
     {
       twoConsNewLines=0;
@@ -132,6 +135,7 @@ char handleCharacter(char c, char prev, int flgFirst)
   }
   if(c=='<')//<
   {
+    inputGlobalFlag=1;
     if(prev=='\n')//\n <
     {
       twoConsNewLines=0;
@@ -160,7 +164,7 @@ char handleCharacter(char c, char prev, int flgFirst)
         {
           if(twoConsNewLines)// a \n \n b
           {
-            growTree(tempArray, 1,0,0);
+            growTree(tempArray, 1,inputGlobalFlag,outputGlobalFlag);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
               reallocate();
@@ -169,7 +173,7 @@ char handleCharacter(char c, char prev, int flgFirst)
           }
           else//a \n b
           {
-            growTree(tempArray, 0,0,0);
+            growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
               reallocate();
@@ -182,7 +186,7 @@ char handleCharacter(char c, char prev, int flgFirst)
           if (twoConsNewLines)//| \n a
           {
             twoConsNewLines=0;
-	    growTree(tempArray,0,0,0);
+	    growTree(tempArray,0,inputGlobalFlag,outputGlobalFlag);
 	    memset(tempArray,0,strlen(tempArray));
 	    reallocCheck=0;
 	    reallocate();
@@ -192,7 +196,7 @@ char handleCharacter(char c, char prev, int flgFirst)
           else//| \n \n a
           {
             twoConsNewLines=0;
-            growTree(tempArray, 0,0,0);
+            growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
               reallocate();
@@ -205,7 +209,7 @@ char handleCharacter(char c, char prev, int flgFirst)
       {
         if(prev=='>')//> a
         {
-          growTree(tempArray, 0,0,1);
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0; 
             reallocate();
@@ -216,7 +220,7 @@ char handleCharacter(char c, char prev, int flgFirst)
         }
         else if(prev=='<')//< a
         {
-          growTree(tempArray, 0,1,0);
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0; 
               reallocate();
@@ -226,7 +230,7 @@ char handleCharacter(char c, char prev, int flgFirst)
         }
         else//| a
         {
-          growTree(tempArray, 0,0,0);
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
 	    reallocate();
@@ -250,7 +254,7 @@ char handleCharacter(char c, char prev, int flgFirst)
         }
         else//a |
         {
-          growTree(tempArray, 0,0,0);
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
             reallocate();
@@ -319,7 +323,6 @@ char handleCharacter(char c, char prev, int flgFirst)
             {
               if (globalFlg)//a \n |
               {
-                growTree(tempArray, 0,0,0);
                 memset(tempArray,0,strlen(tempArray));
                 reallocCheck=0;
 		reallocate();
@@ -385,6 +388,8 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
       printf("\n\t\toutputFlg");
     }
   printf("\n\tTemp is %s",tmp);
+  inputGlobalFlag=0;
+  outputGlobalFlag=0;
 }
 void reallocate()
 {
