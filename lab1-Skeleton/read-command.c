@@ -32,8 +32,8 @@ typedef struct command_stream
 };
 typedef struct opStackNode
 {
-  operator* data;
-  opStackNode* next;
+  struct operator* data;
+  struct opStackNode* next;
 };
 
 
@@ -67,8 +67,8 @@ void push(opStackNode* current, opStackNode* head)
 
 typedef struct comStackNode
 {
-  command* data;
-  comStackNode* next;
+  struct command* data;
+  struct comStackNode* next;
 };
 comStackNode* pop(comStackNode* cur)
 {
