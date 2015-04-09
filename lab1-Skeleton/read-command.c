@@ -181,8 +181,13 @@ char handleCharacter(char c, char prev, int flgFirst)
         {
           if (twoConsNewLines)//| \n a
           {
-            error (1, 0, "| ; a not handled");
-            exit(0);
+            twoConsNewLines=0;
+	    growTree(tempArray,0,0,0);
+	    memset(tempArray,0,strlen(tempArray));
+	    reallocCheck=0;
+	    reallocate();
+	    tempArray[reallocCheck++]=c;
+	    return c;
           }
           else//| \n \n a
           {
@@ -366,6 +371,18 @@ char handleCharacter(char c, char prev, int flgFirst)
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 {
+  if(newTreeFlg)
+    {
+      printf("\n\t\tNEW TREE");
+    }
+  if(inputFlg)
+    {
+      printf("\n\t\tinputFlg");
+    }
+  if(outputFlg)
+    {
+      printf("\n\t\toutputFlg");
+    }
   printf("\n\tTemp is %s",tmp);
 }
 void reallocate()
