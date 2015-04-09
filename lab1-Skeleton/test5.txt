@@ -1,5 +1,6 @@
-a&&b||
+a;b||
  c &&
-  d | e && f|
+  d | e && f|g
 
-g<h
+h>i
+z<q

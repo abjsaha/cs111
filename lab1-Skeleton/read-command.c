@@ -371,6 +371,7 @@ char handleCharacter(char c, char prev, int flgFirst)
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 {
+  twoConsNewLines=0;
   if(newTreeFlg)
     {
       printf("\n\t\tNEW TREE");
