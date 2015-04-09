@@ -28,6 +28,22 @@ typedef struct opStackNode
   operator* data;
   opStackNode* next;
 };
+
+commandNode* addToCommandStream(command_stream stream, commandNode newNode)
+{
+  //if steam is empty
+  if (stream.head == null)
+  {
+    stream.head = &newNode;
+    stream.tail = &newNode;
+  }
+  //if stream is not empty, add to end of stream
+  else
+  {
+    tail->next = null;
+    tail = &newNode;
+  }
+}
 opStackNode* pop(opStackNode* current)
 {
   opStackNode* tmp = cur;
@@ -59,17 +75,17 @@ void push(comStackNode* cur, comStackNode* head)
 
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
-		     void *get_next_byte_argument)
+ void *get_next_byte_argument)
 {
   /* FIXME: Replace this with your implementation.  You may need to
      add auxiliary functions and otherwise modify the source code.
      You can also use external functions defined in the GNU C Library.  */
-  int c;
+     int c;
   //char** tokens = (char**) checked_malloc(CMD_SIZE * sizeof(char*));
   //tokens[0] = (char*) checked_malloc(WORD_SIZE);
-  int sizeTotal=1024;
-  char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
-  int index=0;
+     int sizeTotal=1024;
+     char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
+     int index=0;
   while(1) //change this to postfix transform
   {
     c=get_next_byte(get_next_byte_argument);
@@ -107,7 +123,7 @@ read_command_stream (command_stream_t s)
 opStackNode* opStackHead = null;
 comStackNode* comStackHead = null;
 command_stream_t;
-//example: push(tmp, opStackHead);
+command_stream comStream;
 
 /* PSUEDO CODE
 - if simple command, push onto command stack
@@ -124,11 +140,25 @@ command_stream_t;
 */
 
 
+bool newTreeFlg2 = false;
+bool inputFlg2 = false;
+bool outputFlg2 = false;
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
-  if (newTreeFlg){
+  //reset shit
+  twoConsNewLines=0;
+  newTreeFlg2 = false;
+  inputFlg2 = false;
+  outputFlg2 = false;
+
+  if (newTreeFlg2){  //reached end of entire command
     //add tree to stream
+    command nodeToAdd = pop(comStackHead)->data;
+    addToCommandStream(comStream, nodeToAdd);
     //clear stacks
+    comStackHead = null;
+    opStackHead = null;
+  }
 
   else{
     operator curOp;
@@ -151,7 +181,7 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
         //pop and combine shit
         popAndCombine();
       //create subshell command and push it to command stack
-      curCom.type = SUBSHELL_COMMAND;
+        curCom.type = SUBSHELL_COMMAND;
       curCom.subshell_command = opStackHead->data; //pop here before setting subshell_cmd?
       comNode->data = curCom;
       comNode->next = null;
@@ -169,53 +199,54 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
         while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
          //pop and combine shit
          popAndCombine();
-      }
-      push(opNode, opStackHead);
-      }  
-    }
-    else if (*tmp == "||" || *tmp == "&&"){
-      curOp.data = tmp;
-      curOp.precedence = PRECEDENCE_AND_OR;
-      opNode->data = curOp;
-      opNode->next = null;
-      if (opStackHead->next != null){
+       }
+       push(opNode, opStackHead);
+     }  
+   }
+   else if (*tmp == "||" || *tmp == "&&"){
+    curOp.data = tmp;
+    curOp.precedence = PRECEDENCE_AND_OR;
+    opNode->data = curOp;
+    opNode->next = null;
+    if (opStackHead->next != null){
         //if op stack is not empty
         //while next operator on stack has greater or equal precedence than tmp
-        while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
+      while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
           //pop and combine shit
-          popAndCombine();
+        popAndCombine();
       }
       push(opNode, opStackHead);
-      }  
-    }
-    else if (*tmp == ";") {
-      curOp.data = tmp;
-      curOp.precedence = PRECEDENCE_SEMI_NEWLINE;
-      opNode->data = curOp;
-      opNode->next = null;
-      if (opStackHead->next != null){
+    }  
+  }
+  else if (*tmp == ";") {
+    curOp.data = tmp;
+    curOp.precedence = PRECEDENCE_SEMI_NEWLINE;
+    opNode->data = curOp;
+    opNode->next = null;
+    if (opStackHead->next != null){
         //if op stack is not empty
         //while next operator on stack has greater or equal precedence than tmp
-        while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
+      while (opStackHead->data.precedence >= curOp.precedence && opStackHead->data.data != "(")
          //pop and combine shit
-         popAndCombine();
-      }
-      push(opNode, opStackHead);
-      }  
-    }
+       popAndCombine();
+     }
+     push(opNode, opStackHead);
+   }  
+ }
 
     //tmp is a simple command
-    else {
-      if (inputFlg){
+ else {
+  if (inputFlg2){
         //set tmp as the input of the top of command stack then push it back on command stack
         comNode = pop(comStackHead); //pointers are confusing :( i dont think i did this right
         comNode.data->input = tmp; //pointers suck
         push(comNode, comStackHead);
       }
-      else if (outputFlg){
+      else if (outputFlg2){
         //set tmp as output of the top of command stack then push it back on command stack
         comNode = pop(comStackHead); //pointers are confusing :( i dont think i did this right
         comNode.data->output = tmp; //pointers suck
+        push(comNode, comStackHead);
       }
       else{
         //initialize command and push on command stack
@@ -228,6 +259,13 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg){
       }
     }
   }
+
+  if (newTreeFlg)
+    newTreeFlg2 = true;
+  if (inputFlg)
+    inputFlg2 = true;
+  if (outputFlg)
+    outputFlg2 = true;
 }
 
 
@@ -240,12 +278,15 @@ popAndCombine(){
   if (curOp.data == "&&")
     curCom.type = AND_COMMAND;
   if (curOp.data == ";")
-    curCom.type = SEQUENCE_COMMAND;
+  curCom.type = SEQUENCE_COMMAND;
   //pop two commands and combine them to be a new command
-    curCom.command[0] = pop(comStackHead)->data;
-    curCom.command[1] = pop(comStackHead)->data;
+  curCom.command[0] = pop(comStackHead)->data;
+  curCom.command[1] = pop(comStackHead)->data;
   //push new combined command onto command stack
-    comNode->data = curCom;
-    comNode->next = null;
-    push(comNode, comStackHead);
+  comNode->data = curCom;
+  comNode->next = null;
+  push(comNode, comStackHead);
 }
+
+
+//DEAL WITH A<B>C<D...
