@@ -15,7 +15,7 @@
 
 /* FIXME: Define the type 'struct command_stream' here.  This should
    complete the incomplete type declaration in command.h.  */
-/*typedef commandNode
+typedef commandNode
 {
   struct command* command; //root of tree
   struct commandNode* next;
@@ -42,7 +42,7 @@ opStackNode push(opStackNode current, opStackNode head)
   current->next=head;
   head=current;
   return head;
-  }*/
+}
   char handleCharacter(char c, char prev, int flgFirst);
   void reallocate();
   void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg);
@@ -68,7 +68,7 @@ opStackNode push(opStackNode current, opStackNode head)
   while(1) //change this to postfix transform
   {
     c=get_next_byte(get_next_byte_argument);
-    printf("\n Next byte is %c",c);
+    //printf("\n Next byte is %c",c);
     if(c==EOF)
     {
 
@@ -87,13 +87,13 @@ opStackNode push(opStackNode current, opStackNode head)
       {
         growTree(tempArray,0,0,0);
       }
-      printf("\n reached end of file.");
+      //printf("\n reached end of file.");
       break;
     }
     if(index==0)
     {
       prev=handleCharacter(c,'-',index);
-      printf("\n Previous charcter is %c",prev);
+      //printf("\n Previous charcter is %c",prev);
       if(prev==';')
       {
        prev=' ';
@@ -103,7 +103,7 @@ opStackNode push(opStackNode current, opStackNode head)
    else
    {
     prev=handleCharacter(c,prev,index);
-    printf("\n Previous charcter is %c",prev);
+    //printf("\n Previous charcter is %c",prev);
   }
   index++;
     /*entireStream[index++]=(char)c;
@@ -401,17 +401,17 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   twoConsNewLines=0;
   if(newTreeFlg)
   {
-    printf("\n\t\tNEW TREE");
+    //printf("\n\t\tNEW TREE");
   }
   if(inputGlobalFlag)
   {
-    printf("\n\t\tinputFlg");
+    //printf("\n\t\tinputFlg");
   }
   if(outputGlobalFlag)
   {
-    printf("\n\t\toutputFlg");
+    //printf("\n\t\toutputFlg");
   }
-  printf("\n\tTemp is %s",tmp);
+  //printf("\n\tTemp is %s",tmp);
   inputGlobalFlag=0;
   outputGlobalFlag=0;
 }
