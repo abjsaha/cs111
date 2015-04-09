@@ -78,9 +78,15 @@ opStackNode push(opStackNode current, opStackNode head)
         {
           growTree(tempArray,1,0,0);
         }
+        else
+        {
+          growTree(tempArray,0,0,0);
+        }
       }
       else
+      {
         growTree(tempArray,0,0,0);
+      }
       printf("\n reached end of file.");
       break;
     }
