@@ -26,10 +26,7 @@ parse script from left to right
 */
 
 //initialize empty operator and command stacks
-charStack cstack;
-opStack ostack;
-ostack.initStack(&ostack, 2048);
-cstack.initStack(&cstack, 2048);
+
 
 //initialize commands and operators as we iterate from left to right
 //should we define a data struct for an operator? not sure if this is necessary
@@ -37,32 +34,6 @@ cstack.initStack(&cstack, 2048);
 
 //for now just define separate function to compare presedence of two operators
 //returns true if the other operator has a higher or equal presedence than the cur operator
-bool shouldPop(&char curOp[], &char otherOp[]){
-	if (curOp == ";")
-		return true;
-	if (curOp == "&&" || curOp == "||"){
-		if (otherOp == ";")
-	}
-	if (curOp == "|")
-		return false;
-}
-
-//if current thing is a command:
-//initialize the command
-command com;
-//set the fields of the command...
-//decide what to do with the command 
-if (com.type == SIMPLE_COMMAND)
-	cstack.push(&cstack, com);
-
-//if current thing is an operator
-//initialize the operator
-char op[];
-//decide what to do with the operator
-if (op == "(" || ostack.isEmpty(&ostack))
-	ostack.push(&ostack, op);
-
-
 
 
 
