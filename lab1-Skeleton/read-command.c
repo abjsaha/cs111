@@ -181,7 +181,7 @@ char handleCharacter(char c, char prev, int flgFirst)
         {
           if (twoConsNewLines)//| \n a
           {
-            error (1, 0, "command reading not yet implemented");
+            error (1, 0, "| ; a not handled");
             exit(0);
           }
           else//| \n \n a
@@ -306,7 +306,7 @@ char handleCharacter(char c, char prev, int flgFirst)
               }
               else//| \n \n ;
               {
-                error (1, 0, "command reading not yet implemented");
+                error (1, 0, "| \n \n ; not implemented");
                 exit(0);
               }
             }
@@ -324,14 +324,14 @@ char handleCharacter(char c, char prev, int flgFirst)
               }
               else//| \n ;
               {
-                error (1, 0, "command reading not yet implemented");
+                error (1, 0, "| \n ; not yet implemented");
                 exit(0);
               }
             }
           }
           else//| ;
           {
-            error (1, 0, "command reading not yet implemented");
+            error (1, 0, "| ; ");
             exit(0);
           }
         }
@@ -357,7 +357,7 @@ char handleCharacter(char c, char prev, int flgFirst)
     }
     else
     {
-      error (1, 0, "command reading not yet implemented");
+      error (1, 0, "two consecutive special characters not implemented");
       exit(0);
     }
   }
@@ -366,7 +366,7 @@ char handleCharacter(char c, char prev, int flgFirst)
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 {
-  printf("\nTemp is %s",tmp);
+  printf("\n\tTemp is %s",tmp);
 }
 void reallocate()
 {
