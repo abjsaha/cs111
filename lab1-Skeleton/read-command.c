@@ -185,13 +185,17 @@ opStackNode push(opStackNode current, opStackNode head)
           }
           else//a \n b
           {
+            //IFFFY
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
             memset(tempArray,0,strlen(tempArray));
             reallocCheck=0;
             globalFlg=0;
             reallocate();
-            tempArray[reallocCheck++]=';';
-            return ';';          
+            /*tempArray[reallocCheck++]=';';
+            return ';';*/
+            growTree(";",0,inputGlobalFlag,outputGlobalFlag);
+            tempArray[reallocCheck++]=c;
+            return c;
           }
         }
         else//| \n a or | \n \n a
