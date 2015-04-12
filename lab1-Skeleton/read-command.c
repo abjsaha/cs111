@@ -19,6 +19,7 @@ as we want everything to exist in memory and be changed by value hence this
 was essential.
 ALL SYNTAX ERRORS HAVE BEEN SOLVED
 implemented word handler with a O(N^2) complexity
+oh and made read_command_stream
 Things to do next:
 > Malloc and Realloc for all pointers!!!!!!!!!!!!!!! GOD DAMN THIS IS GONNA BE ANNOYING
 > Then start debugging Mdoe's part
@@ -208,7 +209,7 @@ read_command_stream (command_stream_t s)
     command_t returnValue=s->head->rootCommand;
     command_node_t tmp=s->head;
     s->head=s->head->next;
-    free(tmp)
+    free(tmp);
     return returnValue;
   }
   return NULL;
