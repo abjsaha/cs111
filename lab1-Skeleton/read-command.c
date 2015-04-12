@@ -207,7 +207,7 @@ index++;
 //make array of command trees
 //run each command tree through postfix implementation
 //error (1, 0, "command reading not yet implemented");
-  return 0;
+  return comStreamT;
 }
 command_t
 read_command_stream (command_stream_t s)
