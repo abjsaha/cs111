@@ -36,7 +36,7 @@ typedef struct commandNode *command_node_t;
 typedef struct opstack *OpStackNode;
 typedef struct comstack *comStackNode;
 typedef struct op operator;
-typedef struct commandstream *command_stream;
+typedef struct commandstream command_stream;
 struct op
 {
   int precedence;
