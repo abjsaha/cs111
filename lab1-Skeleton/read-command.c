@@ -633,19 +633,19 @@ else{
           {
             if(i==0&&tmp[j]==' ')
             {
-              memcpy(curCom->u.word[wordCounter],&temp[i+1],j-i+1);
+              memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
               curCom->u.word[wordCounter++][j-i+1]='\0';
               i=j;
             }
             else if(tmp[j]==' ')
             {
-              memcpy(curCom->u.word[wordCounter++],&temp[i+1],j-i+1);
+              memcpy(curCom->u.word[wordCounter++],&tmp[i+1],j-i+1);
               curCom->u.word[wordCounter++][j-i+1]='\0';
               i=j;
             }
             else if(j==strlen(temp)-1)
             {
-              memcpy(curCom->u.word[wordCounter++],&temp[i+1],j-i+1);
+              memcpy(curCom->u.word[wordCounter++],&tmp[i+1],j-i+1);
               curCom->u.word[wordCounter++][j-i+1]='\0';
               i=j;
             }
