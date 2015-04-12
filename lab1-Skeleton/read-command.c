@@ -36,7 +36,6 @@ typedef struct commandNode *command_node_t;
 typedef struct opstack *OpStackNode;
 typedef struct comstack *comStackNode;
 typedef struct op operator;
-typedef struct commandstream command_stream;
 struct op
 {
   int precedence;
@@ -47,7 +46,7 @@ struct commandNode
   command_t rootCommand; //root of tree
   command_node_t next;
 };
-struct commandstream
+struct command_stream
 {
   command_node_t head;
   command_node_t tail;
@@ -63,7 +62,6 @@ struct comstack
   comStackNode next;
 };
 comStackNode comStackHead;
-command_stream comStream;
 OpStackNode opStackHead;
 command_stream_t comStreamT;
 operator* curOp;
@@ -71,7 +69,7 @@ command_t curCom;
 OpStackNode opNode;
 comStackNode comNode;
 bool newTreeFlg2 = false;
-command_node_t addToCommandStream(command_stream stream, command_t newNode)
+command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 {
 //if steam is empty
   command_node_t temp;
@@ -159,7 +157,7 @@ while(1) //change this to postfix transform
     popAndCombine();
     //add tree to stream
     command_t nodeToAdd = popCom(comStackHead)->data;
-    addToCommandStream(comStream, nodeToAdd);
+    addToCommandStream(comStreamT, nodeToAdd);
     //clear stacks
     comStackHead = NULL;
     opStackHead = NULL;
@@ -538,7 +536,7 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
   command_t nodeToAdd = popCom(comStackHead)->data;
-  addToCommandStream(comStream, nodeToAdd);
+  addToCommandStream(comStreamT, nodeToAdd);
   //clear stacks
   comStackHead = NULL;
   opStackHead = NULL;
