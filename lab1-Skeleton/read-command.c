@@ -207,7 +207,7 @@ read_command_stream (command_stream_t s)
 //error (1, 0, "command reading not yet implemented");
   if(s->head)
   {
-    command_t returnValue=s->head->data;
+    command_t returnValue=s->head->rootCommand;
     command_node_t tmp=s->head;
     s->head=s->head->next;
     free(tmp)
