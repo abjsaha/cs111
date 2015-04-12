@@ -643,7 +643,7 @@ else{
               curCom->u.word[wordCounter++][j-i+1]='\0';
               i=j;
             }
-            else if(j==strlen(temp)-1)
+            else if(j==strlen(tmp)-1)
             {
               memcpy(curCom->u.word[wordCounter++],&tmp[i+1],j-i+1);
               curCom->u.word[wordCounter++][j-i+1]='\0';
