@@ -127,8 +127,18 @@ make_command_stream (int (*get_next_byte) (void *),
 //char** tokens = (char**) checked_malloc(CMD_SIZE * sizeof(char*));
 //tokens[0] = (char*) checked_malloc(WORD_SIZE);
    int sizeTotal=1024;
-   tempArray=(char*)malloc(sizeof(char)*INITIAL_SIZE);
-
+   tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
+   comStackHead=(comstack*)checked_malloc(sizeof(comstack));
+   opStackHead=(opstack*)checked_malloc(sizeof(opstack));
+   comStreamT=(command_stream*)checked_malloc(sizeof(command_stream));
+   curOp=(op*)checked_malloc(sizeof(op));
+   //curOp->data=(char*)checked_realloc(INITIAL_SIZE*sizeof(char));
+   curCom=(command*)checked_malloc(sizeof(command));
+   opNode=(opstack*)checked_malloc(sizeof(opstack));
+   //opNode->data = (op*)checked_malloc(sizeof(op)); 
+   //opNode->data->data=(char*)checked_malloc(INITIAL_SIZE*sizeof(char))
+   comNode=(comstack*)checked_malloc(sizeof(comstack));
+   //comNode->data=(command*)checked_malloc(sizeof(command));
 //char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
    int index=0;
    char prev=' ';
@@ -501,7 +511,7 @@ outputGlobalFlag=0;
 void reallocate()
 {
   reallocSize*=2;
-  tempArray=(char*)realloc(tempArray,reallocSize);
+  tempArray=(char*)checked_realloc(tempArray,reallocSize);
 }
 
 
@@ -545,12 +555,14 @@ if (newTreeFlg2){  //reached end of entire command
 }
 
 else{
-
+  //curOp->data=(char*)checked_realloc(sizeof(tmp));
+  
   //determine if tmp is an operator
   //if it is an operator, set fields of curOp
   if (strcmp(tmp,"(")==0){
     curOp->data = tmp;
     curOp->precedence = 0;
+    //opNode->data = (op*)checked_relloc(sizeof(curOp)); 
     opNode->data = curOp;
     opNode->next = NULL;
     pushOp(opNode, opStackHead);
@@ -561,7 +573,7 @@ else{
       //pop and combine shit
       popAndCombine();
     //create subshell command and push it to command stack
-      curCom->type = SUBSHELL_COMMAND;
+    curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = opStackHead->data->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
