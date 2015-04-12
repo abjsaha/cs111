@@ -65,6 +65,11 @@ struct comstack
 comStackNode comStackHead;
 command_stream comStream;
 OpStackNode opStackHead;
+command_stream_t comStreamT;
+operator* curOp;
+command_t curCom;
+OpStackNode opNode;
+comStackNode comNode;
 bool newTreeFlg2 = false;
 command_node_t addToCommandStream(command_stream stream, command_t newNode)
 {
@@ -200,7 +205,15 @@ read_command_stream (command_stream_t s)
 {
 /* FIXME: Replace this with your implementation too.  */
 //error (1, 0, "command reading not yet implemented");
-  return 0;
+  if(s->head)
+  {
+    command_t returnValue=s->head->data;
+    command_node_t tmp=s->head;
+    s->head=s->head->next;
+    free(tmp)
+    return returnValue;
+  }
+  return NULL;
 }
 int reallocSize=1024;
 int reallocCheck=0;
@@ -493,7 +506,6 @@ void reallocate()
 }
 
 
-command_stream_t comStreamT;
 
 /* PSUEDO CODE
 - if simple command, push onto command stack
@@ -513,10 +525,7 @@ void popAndCombine();
 
 bool inputFlg2 = false;
 bool outputFlg2 = false;
-operator* curOp;
-command_t curCom;
-OpStackNode opNode;
-comStackNode comNode;
+
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 {
@@ -623,7 +632,6 @@ else{
       //initialize command and push on command stack
       curCom->type = SIMPLE_COMMAND;
       //TODO: initialize command's words
-      char** tmpWord;
       int i=0, j=0, wordCounter=0;
       for(i=0;i<strlen(tmp)-1;i++)
       {
