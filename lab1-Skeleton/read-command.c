@@ -643,6 +643,7 @@ else{
       //initialize command and push on command stack
       curCom->type = SIMPLE_COMMAND;
       //TODO: initialize command's words
+      curCom->u.word=(char**)checked_malloc(sizeof(tmp));
       int i=0, j=0, wordCounter=0;
       for(i=0;i<strlen(tmp)-1;i++)
       {
