@@ -12,7 +12,24 @@
 #define INITIAL_SIZE 1024
 /* FIXME: You may need to add #include directives, macro definitions,
  static function definitions, etc.  */
+/*
+NOTE FOR DOELLING (4/10/2015) :
+As you can see a lot has changed here, almost everything is a pointer
+as we want everything to exist in memory and be changed by value hence this
+was essential.
+ALL SYNTAX ERRORS HAVE BEEN SOLVED
+implemented word handler with a O(N^2) complexity
+Things to do next:
+> Malloc and Realloc for all pointers!!!!!!!!!!!!!!! GOD DAMN THIS IS GONNA BE ANNOYING
+> Then start debugging Mdoe's part
+> FINISHED WOOOHOOOO
 
+don't over work yourself
+there is always sunday
+come to grace's
+don't be a dumb dumd
+joy out
+*/
 /* FIXME: Define the type 'struct command_stream' here.  This should
  complete the incomplete type declaration in command.h.  */
 typedef struct commandNode *command_node_t;
@@ -610,7 +627,7 @@ else{
       int i=0, j=0, wordCounter=0;
       for(i=0;i<strlen(tmp)-1;i++)
       {
-        if(temp[i]==' '||i==0)
+        if(tmp[i]==' '||i==0)
         {
           for(j=i+1;j<strlen(tmp);j++)
           {
