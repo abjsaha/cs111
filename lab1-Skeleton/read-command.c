@@ -607,25 +607,37 @@ else{
       curCom->type = SIMPLE_COMMAND;
       //TODO: initialize command's words
       char** tmpWord;
-      int i=0,j=0;
+      int i=0, j=0, wordCounter=0;
       for(i=0;i<strlen(tmp)-1;i++)
       {
-        for(j=i+1;j<strlen(tmp);j++)
+        if(temp[i]==' '||i==0)
         {
-          if(i==0&&tmp[j]==' ')
+          for(j=i+1;j<strlen(tmp);j++)
           {
-            curCom->u.word[i]=tmp;
-	    i=j;
-          }
-          else if(tmp[j]==' ')
-          {
-	    //memcpy()
+            if(i==0&&tmp[j]==' ')
+            {
+              memcpy(curCom->u.word[wordCounter],&temp[i+1],j-i+1);
+              curCom->u.word[wordCounter++][j-i+1]='\0';
+              i=j;
+            }
+            else if(tmp[j]==' ')
+            {
+              memcpy(curCom->u.word[wordCounter++],&temp[i+1],j-i+1);
+              curCom->u.word[wordCounter++][j-i+1]='\0';
+              i=j;
+            }
+            else if(j==strlen(temp)-1)
+            {
+              memcpy(curCom->u.word[wordCounter++],&temp[i+1],j-i+1);
+              curCom->u.word[wordCounter++][j-i+1]='\0';
+              i=j;
+            }
           }
         }
       }
       if(strlen(tmp)==1)
         curCom->u.word[0]=tmp;
-        comNode->data = curCom;
+      comNode->data = curCom;
       comNode->next = NULL;
       //push onto command stack
       pushCom(comNode, comStackHead);
