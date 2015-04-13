@@ -670,62 +670,62 @@ else{
       }
       else{
       //initialize command and push on command stack
-	curCom=NULL;
-	curCom=(command_t)checked_malloc(sizeof(struct command));
-        curCom->type = SIMPLE_COMMAND;
+       curCom=NULL;
+       curCom=(command_t)checked_malloc(sizeof(struct command));
+       curCom->type = SIMPLE_COMMAND;
       //initialize command's words
         //if(!curCom->u.word)
-	curCom->u.word=(char**)checked_malloc(sizeof(tmp));
-        int i=0, j=0, wordCounter=0;
-        for(i=0;i<strlen(tmp)-1;i++)
+       curCom->u.word=(char**)checked_malloc(sizeof(char*)*sizeof(tmp));
+       int i=0, j=0, wordCounter=0;
+       for(i=0;i<strlen(tmp)-1;i++)
+       {
+        if(tmp[i]==' '||i==0)
         {
-          if(tmp[i]==' '||i==0)
+          for(j=i+1;j<strlen(tmp);j++)
           {
-            for(j=i+1;j<strlen(tmp);j++)
+            if(i==0&&tmp[j]==' ')
             {
-              if(i==0&&tmp[j]==' ')
-              {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-                i=j;
-              }
-              else if(tmp[j]==' ')
-              {
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+              i=j;
+            }
+            else if(tmp[j]==' ')
+            {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-                i=j;
-              }
-              else if(j==strlen(tmp)-1)
-              {
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+              i=j;
+            }
+            else if(j==strlen(tmp)-1)
+            {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-                i=j;
-              }
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+              i=j;
             }
           }
         }
-        if(strlen(tmp)==1)
-        {
+      }
+      if(strlen(tmp)==1)
+      {
           //curCom->u.word[0]=&tmp[0];
-         curCom->u.word[0]=substring(tmp,strlen(tmp));
-       }
-       comNode->data = curCom;
-       comNode->next = NULL;
-      //push onto command stack
-       pushCom(comNode);
+       curCom->u.word[0]=substring(tmp,strlen(tmp));
      }
+     comNode->data = curCom;
+     comNode->next = NULL;
+      //push onto command stack
+     pushCom(comNode);
    }
  }
+}
 
 
- if (newTreeFlg)
- {
+if (newTreeFlg)
+{
   newTreeFlg2 = true;
   while(comStackHead->next)
     popAndCombine();
