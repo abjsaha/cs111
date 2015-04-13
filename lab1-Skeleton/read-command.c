@@ -274,7 +274,14 @@ if(flgFirst!=0)
       {
         if(twoConsNewLines)// a \n \n b
         {
-          growTree(tempArray, 1,inputGlobalFlag,outputGlobalFlag);
+          if(strcmp(tempArray," ")!=0)
+          {
+            if(tempArray[0]==' ')
+              tempArray++;
+            if(tempArray[strlen(tempArray)-1]==' ')
+              tempArray[strlen(tempArray)-1]='\0';
+            growTree(tempArray, 1,inputGlobalFlag,outputGlobalFlag);
+          }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           globalFlg=0;
@@ -285,7 +292,14 @@ if(flgFirst!=0)
         else//a \n b
         {
           //IFFFY
-          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+          if(strcmp(tempArray," ")!=0)
+          {
+            if(tempArray[0]==' ')
+              tempArray++;
+            if(tempArray[strlen(tempArray)-1]==' ')
+              tempArray[strlen(tempArray)-1]='\0';
+            growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+          }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           globalFlg=0;
@@ -302,7 +316,14 @@ if(flgFirst!=0)
         if (twoConsNewLines)//| \n a
         {
           twoConsNewLines=0;
-          growTree(tempArray,0,inputGlobalFlag,outputGlobalFlag);
+          if(strcmp(tempArray," ")!=0)
+          {
+            if(tempArray[0]==' ')
+              tempArray++;
+            if(tempArray[strlen(tempArray)-1]==' ')
+              tempArray[strlen(tempArray)-1]='\0';
+            growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+          }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           reallocate();
@@ -312,7 +333,14 @@ if(flgFirst!=0)
         else//| \n \n a
         {
           twoConsNewLines=0;
-          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+          if(strcmp(tempArray," ")!=0)
+          {
+            if(tempArray[0]==' ')
+              tempArray++;
+            if(tempArray[strlen(tempArray)-1]==' ')
+              tempArray[strlen(tempArray)-1]='\0';
+            growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+          }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           reallocate();
@@ -325,18 +353,32 @@ if(flgFirst!=0)
     {
       if(prev=='>')//> a
       {
+       if(strcmp(tempArray," ")!=0)
+       {
+        if(tempArray[0]==' ')
+          tempArray++;
+        if(tempArray[strlen(tempArray)-1]==' ')
+          tempArray[strlen(tempArray)-1]='\0';
         growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
-        memset(tempArray,0,strlen(tempArray));
-        reallocCheck=0; 
-        reallocate();
-        
-        tempArray[reallocCheck++]=c;
-        //realloc
-        return c;
       }
+      memset(tempArray,0,strlen(tempArray));
+      reallocCheck=0; 
+      reallocate();
+      
+      tempArray[reallocCheck++]=c;
+        //realloc
+      return c;
+    }
       else if(prev=='<')//< a
       {
-        growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        if(strcmp(tempArray," ")!=0)
+        {
+          if(tempArray[0]==' ')
+            tempArray++;
+          if(tempArray[strlen(tempArray)-1]==' ')
+            tempArray[strlen(tempArray)-1]='\0';
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        }
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0; 
         reallocate();
@@ -346,7 +388,14 @@ if(flgFirst!=0)
       }
       else//| a
       {
-        growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        if(strcmp(tempArray," ")!=0)
+        {
+          if(tempArray[0]==' ')
+            tempArray++;
+          if(tempArray[strlen(tempArray)-1]==' ')
+            tempArray[strlen(tempArray)-1]='\0';
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        }
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         reallocate();
@@ -370,7 +419,15 @@ if(flgFirst!=0)
       }
       else//a |
       {
-        growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        if(strcmp(tempArray," ")!=0)
+        {
+          if(tempArray[0]==' ')
+            tempArray++;
+          if(tempArray[strlen(tempArray)-1]==' ')
+            tempArray[strlen(tempArray)-1]='\0';
+          growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+        }
+
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         reallocate();
@@ -573,7 +630,7 @@ else{
       //pop and combine shit
       popAndCombine();
     //create subshell command and push it to command stack
-    curCom->type = SUBSHELL_COMMAND;
+      curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = opStackHead->data->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
