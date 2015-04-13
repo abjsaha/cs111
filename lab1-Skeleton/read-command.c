@@ -55,7 +55,7 @@ bool outputFlg2 = false;
 command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 {
 //if steam is empty
-  command_node_t temp=(command_node_t)checked_malloc(sizeof(commandNode));
+  command_node_t temp=(command_node_t)checked_malloc(sizeof(struct commandNode));
   temp->rootCommand=newNode;
   if (!stream->head)
   {
@@ -106,7 +106,7 @@ make_command_stream (int (*get_next_byte) (void *),
  void *get_next_byte_argument)
 {
  int c;
- 
+
  tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
  comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
  opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
