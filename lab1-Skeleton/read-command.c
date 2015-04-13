@@ -670,10 +670,12 @@ else{
       }
       else{
       //initialize command and push on command stack
+	curCom=NULL;
+	curCom=(command_t)checked_malloc(sizeof(struct command));
         curCom->type = SIMPLE_COMMAND;
       //initialize command's words
-        if(!curCom->u.word)
-          curCom->u.word=(char**)checked_malloc(sizeof(tmp));
+        //if(!curCom->u.word)
+	curCom->u.word=(char**)checked_malloc(sizeof(tmp));
         int i=0, j=0, wordCounter=0;
         for(i=0;i<strlen(tmp)-1;i++)
         {
