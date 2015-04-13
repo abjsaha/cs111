@@ -10,29 +10,7 @@
 #define PRECEDENCE_AND_OR 2
 #define PRECEDENCE_PIPE 3
 #define INITIAL_SIZE 1024
-/* FIXME: You may need to add #include directives, macro definitions,
- static function definitions, etc.  */
-/*
-NOTE FOR DOELLING (4/10/2015) :
-As you can see a lot has changed here, almost everything is a pointer
-as we want everything to exist in memory and be changed by value hence this
-was essential.
-ALL SYNTAX ERRORS HAVE BEEN SOLVED
-implemented word handler with a O(N^2) complexity
-oh and made read_command_stream
-Things to do next:
-> Malloc and Realloc for all pointers!!!!!!!!!!!!!!! GOD DAMN THIS IS GONNA BE ANNOYING
-> Then start debugging Mdoe's part
-> FINISHED WOOOHOOOO
 
-don't over work yourself
-there is always sunday
-come to grace's
-don't be a dumb dumd
-joy out
-*/
-/* FIXME: Define the type 'struct command_stream' here.  This should
- complete the incomplete type declaration in command.h.  */
 typedef struct commandNode *command_node_t;
 typedef struct opstack *OpStackNode;
 typedef struct comstack *comStackNode;
@@ -73,6 +51,7 @@ bool newTreeFlg2 = false;
 void popAndCombine();
 bool inputFlg2 = false;
 bool outputFlg2 = false;
+
 command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 {
 //if steam is empty
@@ -90,7 +69,9 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
     stream->tail = stream->tail->next;
     stream->tail->next=NULL;
   }
+  free(temp);
 }
+
 OpStackNode popOp(OpStackNode current)
 {
   OpStackNode tmp = current;
@@ -113,6 +94,7 @@ void pushCom(comStackNode cur, comStackNode head)
   cur->next=head;
   head=cur;
 }
+
 char handleCharacter(char c, char prev, int flgFirst);
 void reallocate();
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg);
@@ -123,32 +105,27 @@ command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
  void *get_next_byte_argument)
 {
-/* FIXME: Replace this with your implementation.  You may need to
-   add auxiliary functions and otherwise modify the source code.
-   You can also use external functions defined in the GNU C Library.  */
-   int c;
-//char** tokens = (char**) checked_malloc(CMD_SIZE * sizeof(char*));
-//tokens[0] = (char*) checked_malloc(WORD_SIZE);
-   int sizeTotal=1024;
-   tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
-   comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
-   opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
-   comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
-   curOp=(operator*)checked_malloc(sizeof(struct op));
+ int c;
+ 
+ tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
+ comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
+ opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
+ comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
+ curOp=(operator*)checked_malloc(sizeof(struct op));
    //curOp->data=(char*)checked_realloc(INITIAL_SIZE*sizeof(char));
-   curCom=(command_t)checked_malloc(sizeof(struct command));
-   opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
+ curCom=(command_t)checked_malloc(sizeof(struct command));
+ opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
    //opNode->data = (op*)checked_malloc(sizeof(op)); 
    //opNode->data->data=(char*)checked_malloc(INITIAL_SIZE*sizeof(char))
-   comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
+ comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
    //comNode->data=(command*)checked_malloc(sizeof(command));
-//char* entireStream=(char*)malloc(sizeof(char)*sizeTotal);
-   int index=0;
-   char prev=' ';
-while(1) //change this to postfix transform
-{
+
+ int index=0;
+ char prev=' ';
+ while(1)
+ {
   c=get_next_byte(get_next_byte_argument);
-  //printf("\n Next byte is %c",c);
+  //test: printf("\n Next byte is %c",c);
   if(c==EOF)
   {
 
@@ -156,18 +133,39 @@ while(1) //change this to postfix transform
     {
       if(twoConsNewLines)
       {
-        growTree(tempArray,1,0,0);
+        if(strcmp(tempArray," ")!=0)
+        {
+          while(tempArray[0]==' ')
+            tempArray++;
+          while(tempArray[strlen(tempArray)-1]==' ')
+            tempArray[strlen(tempArray)-1]='\0';
+          growTree(tempArray,1,0,0);
+        }
       }
       else
       {
-        growTree(tempArray,0,0,0);
+        if(strcmp(tempArray," ")!=0)
+        {
+          while(tempArray[0]==' ')
+            tempArray++;
+          while(tempArray[strlen(tempArray)-1]==' ')
+            tempArray[strlen(tempArray)-1]='\0';
+          growTree(tempArray,0,0,0);
+        }
       }
     }
     else
     {
-      growTree(tempArray,0,0,0);
+      if(strcmp(tempArray," ")!=0)
+      {
+        while(tempArray[0]==' ')
+          tempArray++;
+        while(tempArray[strlen(tempArray)-1]==' ')
+          tempArray[strlen(tempArray)-1]='\0';
+        growTree(tempArray,0,0,0);
+      }
     }
-    //printf("\n reached end of file.");
+    //test: printf("\n reached end of file.");
     popAndCombine();
     //add tree to stream
     command_t nodeToAdd = popCom(comStackHead)->data;
