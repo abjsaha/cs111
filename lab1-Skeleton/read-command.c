@@ -79,8 +79,8 @@ OpStackNode popOp(OpStackNode current)
 }
 void pushOp(OpStackNode current)
 {
-  current->next=OpStackHead;
-  OpStackHead=current;
+  current->next=opStackHead;
+  opStackHead=current;
 }
 comStackNode popCom(comStackNode cur)
 {
