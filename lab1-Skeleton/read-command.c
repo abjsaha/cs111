@@ -285,6 +285,7 @@ if(flgFirst!=0)
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           globalFlg=0;
+          reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c;
@@ -302,6 +303,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
+          reallocSize=512;
           globalFlg=0;
           reallocate();
           /*tempArray[reallocCheck++]=';';
@@ -326,6 +328,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
+          reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c;
@@ -343,6 +346,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
+          reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c; 
@@ -362,9 +366,10 @@ if(flgFirst!=0)
         growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
       }
       memset(tempArray,0,strlen(tempArray));
-      reallocCheck=0; 
+      reallocCheck=0;
+      reallocSize=512;
       reallocate();
-      
+
       tempArray[reallocCheck++]=c;
         //realloc
       return c;
@@ -380,7 +385,8 @@ if(flgFirst!=0)
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
         memset(tempArray,0,strlen(tempArray));
-        reallocCheck=0; 
+        reallocCheck=0;
+        reallocSize=512;
         reallocate();
 
         tempArray[reallocCheck++]=c;
@@ -398,6 +404,7 @@ if(flgFirst!=0)
         }
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
+        reallocSize=512;
         reallocate();
 
         tempArray[reallocCheck++]=c;
@@ -430,6 +437,7 @@ if(flgFirst!=0)
 
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
+        reallocSize=512;
         reallocate();
         
 
@@ -498,6 +506,7 @@ if(flgFirst!=0)
             {
               memset(tempArray,0,strlen(tempArray));
               reallocCheck=0;
+              reallocSize=512;
               reallocate();
               tempArray[reallocCheck++]=c;
               globalFlg=0;
@@ -613,7 +622,7 @@ if (newTreeFlg2){  //reached end of entire command
 
 else{
   //curOp->data=(char*)checked_realloc(sizeof(tmp));
-  
+
   //determine if tmp is an operator
   //if it is an operator, set fields of curOp
   if (strcmp(tmp,"(")==0){
