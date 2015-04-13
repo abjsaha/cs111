@@ -77,10 +77,10 @@ OpStackNode popOp(OpStackNode current)
   current=current->next;
   return tmp;
 }
-void pushOp(OpStackNode current, OpStackNode head)
+void pushOp(OpStackNode current)
 {
-  current->next=head;
-  head=current;
+  current->next=OpStackHead;
+  OpStackHead=current;
 }
 comStackNode popCom(comStackNode cur)
 {
@@ -596,7 +596,7 @@ else{
     //opNode->data = (op*)checked_relloc(sizeof(curOp)); 
     opNode->data = curOp;
     opNode->next = NULL;
-    pushOp(opNode, opStackHead);
+    pushOp(opNode);
   }
   else if (strcmp(tmp,")")==0){
     //while not matching (
@@ -622,7 +622,7 @@ else{
        //pop and combine shit
        popAndCombine();
      }
-     pushOp(opNode, opStackHead);
+     pushOp(opNode);
    }  
    else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
     curOp->data = tmp;
@@ -636,7 +636,7 @@ else{
         //pop and combine shit
         popAndCombine();
       }
-      pushOp(opNode, opStackHead);
+      pushOp(opNode);
     }  
     else if (strcmp(tmp,";")==0) {
       curOp->data = tmp;
@@ -650,7 +650,7 @@ else{
        //pop and combine shit
          popAndCombine();
        }
-       pushOp(opNode, opStackHead);
+       pushOp(opNode);
      }  
   //tmp is a simple command
      else {
@@ -685,7 +685,7 @@ else{
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
               else if(tmp[j]==' ')
@@ -693,7 +693,7 @@ else{
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
               else if(j==strlen(tmp)-1)
@@ -701,37 +701,37 @@ else{
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
+                curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
             }
           }
         }
         if(strlen(tmp)==1)
-	  {
+        {
           //curCom->u.word[0]=&tmp[0];
-	    curCom->u.word[0]=substring(tmp,strlen(tmp));
-	  }
-        comNode->data = curCom;
-        comNode->next = NULL;
+         curCom->u.word[0]=substring(tmp,strlen(tmp));
+       }
+       comNode->data = curCom;
+       comNode->next = NULL;
       //push onto command stack
-        pushCom(comNode);
-      }
-    }
-  }
+       pushCom(comNode);
+     }
+   }
+ }
 
 
-  if (newTreeFlg)
-  {
-    newTreeFlg2 = true;
-    while(comStackHead->next)
-      popAndCombine();
-  }
+ if (newTreeFlg)
+ {
+  newTreeFlg2 = true;
+  while(comStackHead->next)
+    popAndCombine();
+}
 
-  if (inputFlg)
-    inputFlg2 = true;
-  if (outputFlg)
-    outputFlg2 = true;
+if (inputFlg)
+  inputFlg2 = true;
+if (outputFlg)
+  outputFlg2 = true;
 
 }
 
@@ -744,7 +744,7 @@ void popAndCombine(){
   if (strcmp(curOp->data,"&&")==0)
     curCom->type = AND_COMMAND;
   if (strcmp(curOp->data,";")==0)
-    curCom->type = SEQUENCE_COMMAND;
+  curCom->type = SEQUENCE_COMMAND;
 //pop two commands and combine them to be a new command
   curCom->u.command[1] = popCom(comStackHead)->data;
   curCom->u.command[0] = popCom(comStackHead)->data;
@@ -762,10 +762,10 @@ char* substring(char* s, int l)
   char *sub=malloc(l+1);
   int c=0;
   while(c<l)
-    {
-      *(sub+c)=s[c];
-      c++;
-    }
+  {
+    *(sub+c)=s[c];
+    c++;
+  }
   *(sub+c)='\0';
   return sub;
 }
