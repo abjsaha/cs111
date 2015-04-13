@@ -51,7 +51,7 @@ bool newTreeFlg2 = false;
 void popAndCombine();
 bool inputFlg2 = false;
 bool outputFlg2 = false;
-
+char* substring(char* s, int l);
 command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 {
 //if steam is empty
@@ -683,29 +683,35 @@ else{
               if(i==0&&tmp[j]==' ')
               {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-                curCom->u.word[wordCounter] = &tmp[i+1];
-                curCom->u.word[wordCounter++][j-i+1]='\0';
+                //curCom->u.word[wordCounter] = &tmp[i+1];
+                //curCom->u.word[wordCounter++][j-i+1]='\0';
+		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
               else if(tmp[j]==' ')
               {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-                curCom->u.word[wordCounter] = &tmp[i+1];
-                curCom->u.word[wordCounter++][j-i+1]='\0';
+                //curCom->u.word[wordCounter] = &tmp[i+1];
+                //curCom->u.word[wordCounter++][j-i+1]='\0';
+		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
               else if(j==strlen(tmp)-1)
               {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-                curCom->u.word[wordCounter] = &tmp[i+1];
-                curCom->u.word[wordCounter++][j-i+1]='\0';
+                //curCom->u.word[wordCounter] = &tmp[i+1];
+                //curCom->u.word[wordCounter++][j-i+1]='\0';
+		curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
                 i=j;
               }
             }
           }
         }
         if(strlen(tmp)==1)
-          curCom->u.word[0]=tmp;
+	  {
+          //curCom->u.word[0]=&tmp[0];
+	    curCom->u.word[0]=substring(tmp,strlen(tmp));
+	  }
         comNode->data = curCom;
         comNode->next = NULL;
       //push onto command stack
@@ -751,3 +757,15 @@ void popAndCombine(){
 
 
 //DEAL WITH A<B>C<D...
+char* substring(char* s, int l)
+{
+  char *sub=malloc(l+1);
+  int c=0;
+  while(c<l)
+    {
+      *(sub+c)=s[c];
+      c++;
+    }
+  *(sub+c)='\0';
+  return sub;
+}
