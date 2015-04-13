@@ -615,8 +615,7 @@ else{
     curOp->precedence = PRECEDENCE_PIPE;
     opNode->data = curOp;
     opNode->next = NULL;
-    //if (opStackHead->next != NULL){
-    if (opStackHead){
+    if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than curOp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
@@ -630,7 +629,7 @@ else{
     curOp->precedence = PRECEDENCE_AND_OR;
     opNode->data = curOp;
     opNode->next = NULL;
-    if (opStackHead){
+    if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
@@ -644,7 +643,7 @@ else{
       curOp->precedence = PRECEDENCE_SEMI_NEWLINE;
       opNode->data = curOp;
       opNode->next = NULL;
-      if (opStackHead){
+      if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
