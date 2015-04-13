@@ -276,9 +276,9 @@ if(flgFirst!=0)
         {
           if(strcmp(tempArray," ")!=0)
           {
-            if(tempArray[0]==' ')
+            while(tempArray[0]==' ')
               tempArray++;
-            if(tempArray[strlen(tempArray)-1]==' ')
+            while(tempArray[strlen(tempArray)-1]==' ')
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 1,inputGlobalFlag,outputGlobalFlag);
           }
@@ -295,9 +295,9 @@ if(flgFirst!=0)
           //IFFFY
           if(strcmp(tempArray," ")!=0)
           {
-            if(tempArray[0]==' ')
+            while(tempArray[0]==' ')
               tempArray++;
-            if(tempArray[strlen(tempArray)-1]==' ')
+            while(tempArray[strlen(tempArray)-1]==' ')
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
@@ -320,9 +320,9 @@ if(flgFirst!=0)
           twoConsNewLines=0;
           if(strcmp(tempArray," ")!=0)
           {
-            if(tempArray[0]==' ')
+            while(tempArray[0]==' ')
               tempArray++;
-            if(tempArray[strlen(tempArray)-1]==' ')
+            while(tempArray[strlen(tempArray)-1]==' ')
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
@@ -338,9 +338,9 @@ if(flgFirst!=0)
           twoConsNewLines=0;
           if(strcmp(tempArray," ")!=0)
           {
-            if(tempArray[0]==' ')
+            while(tempArray[0]==' ')
               tempArray++;
-            if(tempArray[strlen(tempArray)-1]==' ')
+            while(tempArray[strlen(tempArray)-1]==' ')
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
@@ -359,9 +359,9 @@ if(flgFirst!=0)
       {
        if(strcmp(tempArray," ")!=0)
        {
-        if(tempArray[0]==' ')
+        while(tempArray[0]==' ')
           tempArray++;
-        if(tempArray[strlen(tempArray)-1]==' ')
+        while(tempArray[strlen(tempArray)-1]==' ')
           tempArray[strlen(tempArray)-1]='\0';
         growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
       }
@@ -378,9 +378,9 @@ if(flgFirst!=0)
       {
         if(strcmp(tempArray," ")!=0)
         {
-          if(tempArray[0]==' ')
+          while(tempArray[0]==' ')
             tempArray++;
-          if(tempArray[strlen(tempArray)-1]==' ')
+          while(tempArray[strlen(tempArray)-1]==' ')
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
@@ -396,9 +396,9 @@ if(flgFirst!=0)
       {
         if(strcmp(tempArray," ")!=0)
         {
-          if(tempArray[0]==' ')
+          while(tempArray[0]==' ')
             tempArray++;
-          if(tempArray[strlen(tempArray)-1]==' ')
+          while(tempArray[strlen(tempArray)-1]==' ')
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
@@ -428,9 +428,9 @@ if(flgFirst!=0)
       {
         if(strcmp(tempArray," ")!=0)
         {
-          if(tempArray[0]==' ')
+          while(tempArray[0]==' ')
             tempArray++;
-          if(tempArray[strlen(tempArray)-1]==' ')
+          while(tempArray[strlen(tempArray)-1]==' ')
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
