@@ -69,7 +69,6 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
     stream->tail = stream->tail->next;
     stream->tail->next=NULL;
   }
-  free(temp);
 }
 
 OpStackNode popOp(OpStackNode current)
@@ -179,7 +178,7 @@ make_command_stream (int (*get_next_byte) (void *),
   if(index==0)
   {
     prev=handleCharacter(c,'-',index);
-    //printf("\n Previous charcter is %c",prev);
+    //test: printf("\n Previous charcter is %c",prev);
     if(prev==';')
     {
      prev=' ';
@@ -189,32 +188,18 @@ make_command_stream (int (*get_next_byte) (void *),
  else
  {
   prev=handleCharacter(c,prev,index);
-  //printf("\n Previous charcter is %c",prev);
+  //test: printf("\n Previous charcter is %c",prev);
 }
 index++;
-  /*entireStream[index++]=(char)c;
-  if(index==sizeTotal)
-  {
-    sizeTotal*=2;
-    entireStream=(char*)realloc(entireStream,sizeTotal);
-    if(entireStream==NULL)
-    {
-      fprintf(stderr, "Error in re-allocationg dynamic memory");
-      exit(1);
-    }
-  }*/
-  }
-//growTree(tempArray,0,0,0);
-//make array of command trees
-//run each command tree through postfix implementation
-//error (1, 0, "command reading not yet implemented");
-  return comStreamT;
 }
+return comStreamT;
+}
+
+
 command_t
 read_command_stream (command_stream_t s)
 {
-/* FIXME: Replace this with your implementation too.  */
-//error (1, 0, "command reading not yet implemented");
+
   if(s->head)
   {
     command_t returnValue=s->head->rootCommand;
@@ -225,6 +210,8 @@ read_command_stream (command_stream_t s)
   }
   return NULL;
 }
+
+
 int reallocSize=1024;
 int reallocCheck=0;
 int outputGlobalFlag=0;
@@ -293,7 +280,6 @@ if(flgFirst!=0)
         }
         else//a \n b
         {
-          //IFFFY
           if(strcmp(tempArray," ")!=0)
           {
             while(tempArray[0]==' ')
@@ -307,8 +293,6 @@ if(flgFirst!=0)
           reallocSize=512;
           globalFlg=0;
           reallocate();
-          /*tempArray[reallocCheck++]=';';
-          return ';';*/
           growTree(";",0,inputGlobalFlag,outputGlobalFlag);
           tempArray[reallocCheck++]=c;
           return c;
@@ -556,7 +540,7 @@ else
 }
 
 
-/*void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
+/*test:  void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 {
 twoConsNewLines=0;
 if(newTreeFlg)
@@ -580,23 +564,6 @@ void reallocate()
   reallocSize*=2;
   tempArray=(char*)checked_realloc(tempArray,reallocSize);
 }
-
-
-
-/* PSUEDO CODE
-- if simple command, push onto command stack
-- if (, push onto operator stack
-- if operator and operator stack is empty, push the operator onto the operator stack
-- if operator and operator stack is not empty, pop all operators with greater/equal precedence off of the operator stack
-* for each operator, pop two commands off command stack
-  combine into new command and push it on command stack
-* stop when reach an operator with lower precedence or a (
-* push new operator onto operator stack
-- if ), pop operators off until matching (
-* create subshell command by popping off top command on command stack
-- if < or >, simply pop top command, set input or output field to character after < or >, push back on
-*/
-
 
 
 
@@ -638,33 +605,32 @@ else{
       popAndCombine();
     //create subshell command and push it to command stack
       curCom->type = SUBSHELL_COMMAND;
-    curCom->u.subshell_command = opStackHead->data->data; //pop here before setting subshell_cmd?
+    curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
     pushCom(comNode, comStackHead);
-
   }
   else if (strcmp(tmp,"|")==0){
     curOp->data = tmp;
     curOp->precedence = PRECEDENCE_PIPE;
     opNode->data = curOp;
     opNode->next = NULL;
-    if (opStackHead->next != NULL){
+    //if (opStackHead->next != NULL){
+    if (opStackHead){
       //if op stack is not empty
-      //while next operator on stack has greater or equal precedence than tmp
+      //while next operator on stack has greater or equal precedence than curOp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
        popAndCombine();
      }
      pushOp(opNode, opStackHead);
    }  
-
    else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
     curOp->data = tmp;
     curOp->precedence = PRECEDENCE_AND_OR;
     opNode->data = curOp;
     opNode->next = NULL;
-    if (opStackHead->next != NULL){
+    if (opStackHead){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
@@ -678,7 +644,7 @@ else{
       curOp->precedence = PRECEDENCE_SEMI_NEWLINE;
       opNode->data = curOp;
       opNode->next = NULL;
-      if (opStackHead->next != NULL){
+      if (opStackHead){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
@@ -691,78 +657,78 @@ else{
      else {
       if (inputFlg2){
       //set tmp as the input of the top of command stack then push it back on command stack
-      comNode = popCom(comStackHead); //pointers are confusing :( i dont think i did this right
-      comNode->data->input = tmp; //pointers suck
-      pushCom(comNode, comStackHead);
-      inputFlg2 = false;
-    }
-    else if (outputFlg2){
+        comNode = popCom(comStackHead);
+        comNode->data->input = tmp;
+        pushCom(comNode, comStackHead);
+        inputFlg2 = false;
+      }
+      else if (outputFlg2){
       //set tmp as output of the top of command stack then push it back on command stack
-      comNode = popCom(comStackHead); //pointers are confusing :( i dont think i did this right
-      comNode->data->output = tmp; //pointers suck
-      pushCom(comNode, comStackHead);
-      outputFlg2 = false;
-    }
-    else{
+        comNode = popCom(comStackHead);
+        comNode->data->output = tmp; 
+        pushCom(comNode, comStackHead);
+        outputFlg2 = false;
+      }
+      else{
       //initialize command and push on command stack
-      curCom->type = SIMPLE_COMMAND;
-      //TODO: initialize command's words
-      curCom->u.word=(char**)checked_malloc(sizeof(tmp));
-      int i=0, j=0, wordCounter=0;
-      for(i=0;i<strlen(tmp)-1;i++)
-      {
-        if(tmp[i]==' '||i==0)
+        curCom->type = SIMPLE_COMMAND;
+      //initialize command's words
+        curCom->u.word=(char**)checked_malloc(sizeof(tmp));
+        int i=0, j=0, wordCounter=0;
+        for(i=0;i<strlen(tmp)-1;i++)
         {
-          for(j=i+1;j<strlen(tmp);j++)
+          if(tmp[i]==' '||i==0)
           {
-            if(i==0&&tmp[j]==' ')
+            for(j=i+1;j<strlen(tmp);j++)
             {
+              if(i==0&&tmp[j]==' ')
+              {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-              curCom->u.word[wordCounter] = &tmp[i+1];
-              curCom->u.word[wordCounter++][j-i+1]='\0';
-              i=j;
-            }
-            else if(tmp[j]==' ')
-            {
+                curCom->u.word[wordCounter] = &tmp[i+1];
+                curCom->u.word[wordCounter++][j-i+1]='\0';
+                i=j;
+              }
+              else if(tmp[j]==' ')
+              {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-              curCom->u.word[wordCounter] = &tmp[i+1];
-              curCom->u.word[wordCounter++][j-i+1]='\0';
-              i=j;
-            }
-            else if(j==strlen(tmp)-1)
-            {
+                curCom->u.word[wordCounter] = &tmp[i+1];
+                curCom->u.word[wordCounter++][j-i+1]='\0';
+                i=j;
+              }
+              else if(j==strlen(tmp)-1)
+              {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
-              curCom->u.word[wordCounter] = &tmp[i+1];
-              curCom->u.word[wordCounter++][j-i+1]='\0';
-              i=j;
+                curCom->u.word[wordCounter] = &tmp[i+1];
+                curCom->u.word[wordCounter++][j-i+1]='\0';
+                i=j;
+              }
             }
           }
         }
-      }
-      if(strlen(tmp)==1)
-        curCom->u.word[0]=tmp;
-      comNode->data = curCom;
-      comNode->next = NULL;
+        if(strlen(tmp)==1)
+          curCom->u.word[0]=tmp;
+        comNode->data = curCom;
+        comNode->next = NULL;
       //push onto command stack
-      pushCom(comNode, comStackHead);
+        pushCom(comNode, comStackHead);
+      }
     }
   }
+
+
+  if (newTreeFlg)
+  {
+    newTreeFlg2 = true;
+    while(comStackHead->next)
+      popAndCombine();
+  }
+
+  if (inputFlg)
+    inputFlg2 = true;
+  if (outputFlg)
+    outputFlg2 = true;
+
 }
-
-
-if (newTreeFlg)
-{
-  newTreeFlg2 = true;
-  popAndCombine();
-}
-
-if (inputFlg)
-  inputFlg2 = true;
-if (outputFlg)
-  outputFlg2 = true;
-
-}
-
 
 void popAndCombine(){
 //define command type
@@ -773,7 +739,7 @@ void popAndCombine(){
   if (strcmp(curOp->data,"&&")==0)
     curCom->type = AND_COMMAND;
   if (strcmp(curOp->data,";")==0)
-  curCom->type = SEQUENCE_COMMAND;
+    curCom->type = SEQUENCE_COMMAND;
 //pop two commands and combine them to be a new command
   curCom->u.command[1] = popCom(comStackHead)->data;
   curCom->u.command[0] = popCom(comStackHead)->data;
@@ -781,6 +747,7 @@ void popAndCombine(){
   comNode->data = curCom;
   comNode->next = NULL;
   pushCom(comNode, comStackHead);
+  curOp = popOp(opStackHead);
 }
 
 
