@@ -591,7 +591,7 @@ else{
   //determine if tmp is an operator
   //if it is an operator, set fields of curOp
   if (strcmp(tmp,"(")==0){
-    curOp->data = tmp;
+    curOp->data = substring(tmp, strlen(tmp));
     curOp->precedence = 0;
     //opNode->data = (op*)checked_relloc(sizeof(curOp)); 
     opNode->data = curOp;
@@ -611,7 +611,7 @@ else{
     pushCom(comNode);
   }
   else if (strcmp(tmp,"|")==0){
-    curOp->data = tmp;
+    curOp->data = substring(tmp, strlen(tmp));
     curOp->precedence = PRECEDENCE_PIPE;
     opNode->data = curOp;
     opNode->next = NULL;
@@ -625,7 +625,7 @@ else{
      pushOp(opNode);
    }  
    else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
-    curOp->data = tmp;
+    curOp->data = substring(tmp, strlen(tmp));
     curOp->precedence = PRECEDENCE_AND_OR;
     opNode->data = curOp;
     opNode->next = NULL;
@@ -639,7 +639,7 @@ else{
       pushOp(opNode);
     }  
     else if (strcmp(tmp,";")==0) {
-      curOp->data = tmp;
+      curOp->data = substring(tmp, strlen(tmp));
       curOp->precedence = PRECEDENCE_SEMI_NEWLINE;
       opNode->data = curOp;
       opNode->next = NULL;
@@ -657,14 +657,14 @@ else{
       if (inputFlg2){
       //set tmp as the input of the top of command stack then push it back on command stack
         comNode = popCom(comStackHead);
-        comNode->data->input = tmp;
+        comNode->data->input = substring(tmp, strlen(tmp));
         pushCom(comNode);
         inputFlg2 = false;
       }
       else if (outputFlg2){
       //set tmp as output of the top of command stack then push it back on command stack
         comNode = popCom(comStackHead);
-        comNode->data->output = tmp; 
+        comNode->data->output = substring(tmp, strlen(tmp)); 
         pushCom(comNode);
         outputFlg2 = false;
       }
