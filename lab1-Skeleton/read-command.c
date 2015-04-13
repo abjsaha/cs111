@@ -70,12 +70,15 @@ command_t curCom;
 OpStackNode opNode;
 comStackNode comNode;
 bool newTreeFlg2 = false;
+void popAndCombine();
+bool inputFlg2 = false;
+bool outputFlg2 = false;
 command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 {
 //if steam is empty
-  command_node_t temp;
+  command_node_t temp=(command_node_t)checked_malloc(sizeof(commandNode));
   temp->rootCommand=newNode;
-  if (stream->head == NULL)
+  if (!stream->head)
   {
     stream->head = temp;
     stream->tail = temp;
@@ -596,10 +599,7 @@ void reallocate()
 - if < or >, simply pop top command, set input or output field to character after < or >, push back on
 */
 
-void popAndCombine();
 
-bool inputFlg2 = false;
-bool outputFlg2 = false;
 
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
