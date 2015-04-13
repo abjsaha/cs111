@@ -88,10 +88,10 @@ comStackNode popCom(comStackNode cur)
   cur=cur->next;
   return tmp;
 }
-void pushCom(comStackNode cur, comStackNode head)
+void pushCom(comStackNode cur)
 {
-  cur->next=head;
-  head=cur;
+  cur->next=comStackHead;
+  comStackHead=cur;
 }
 
 char handleCharacter(char c, char prev, int flgFirst);
@@ -608,7 +608,7 @@ else{
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
-    pushCom(comNode, comStackHead);
+    pushCom(comNode);
   }
   else if (strcmp(tmp,"|")==0){
     curOp->data = tmp;
@@ -658,14 +658,14 @@ else{
       //set tmp as the input of the top of command stack then push it back on command stack
         comNode = popCom(comStackHead);
         comNode->data->input = tmp;
-        pushCom(comNode, comStackHead);
+        pushCom(comNode);
         inputFlg2 = false;
       }
       else if (outputFlg2){
       //set tmp as output of the top of command stack then push it back on command stack
         comNode = popCom(comStackHead);
         comNode->data->output = tmp; 
-        pushCom(comNode, comStackHead);
+        pushCom(comNode);
         outputFlg2 = false;
       }
       else{
@@ -709,7 +709,7 @@ else{
         comNode->data = curCom;
         comNode->next = NULL;
       //push onto command stack
-        pushCom(comNode, comStackHead);
+        pushCom(comNode);
       }
     }
   }
@@ -745,7 +745,7 @@ void popAndCombine(){
 //push new combined command onto command stack
   comNode->data = curCom;
   comNode->next = NULL;
-  pushCom(comNode, comStackHead);
+  pushCom(comNode);
   curOp = popOp(opStackHead);
 }
 
