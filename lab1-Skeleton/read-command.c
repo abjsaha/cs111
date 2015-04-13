@@ -715,7 +715,10 @@ else{
           //curCom->u.word[0]=&tmp[0];
        curCom->u.word[0]=substring(tmp,strlen(tmp));
      }
-     comNode->data = curCom;
+     comNode->data = curCom; //PROBLEM
+     //problem: pushing a comNode that points to curCom, which changes every time tmp changes.
+     //i think curOp and curCom should not be global
+     //or we need to find a way to initialize comNode->data to hold same info as curCom without pointing to it
      comNode->next = NULL;
       //push onto command stack
      pushCom(comNode);
