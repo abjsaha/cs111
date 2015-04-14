@@ -43,10 +43,8 @@ struct comstack
 comStackNode comStackHead;
 OpStackNode opStackHead;
 command_stream_t comStreamT;
-operator* curOp;
-OpStackNode opNode;
 bool newTreeFlg2 = false;
-void popAndCombine(command_t curCom, comStackNode comNode);
+void popAndCombine();
 bool inputFlg2 = false;
 bool outputFlg2 = false;
 char* substring(char* s, int l);
@@ -108,12 +106,6 @@ make_command_stream (int (*get_next_byte) (void *),
  comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
  opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
  comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
- curOp=(operator*)checked_malloc(sizeof(struct op));
-   //curOp->data=(char*)checked_realloc(INITIAL_SIZE*sizeof(char));
- opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
-   //opNode->data = (op*)checked_malloc(sizeof(op)); 
-   //opNode->data->data=(char*)checked_malloc(INITIAL_SIZE*sizeof(char))
-   //comNode->data=(command*)checked_malloc(sizeof(command));
 
  int index=0;
  char prev=' ';
@@ -570,13 +562,20 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   outputGlobalFlag=0;
   twoConsNewLines=0;
 
-//local curCom and comNode
+//local com shit
   command_t curCom;
   curCom=(command_t)checked_malloc(sizeof(struct command));
   comStackNode comNode;
   comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
   comNode->data=(command_t)checked_malloc(sizeof(struct command));
   comNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
+//local op shit
+  operator* curOp;
+  curOp=(operator*)checked_malloc(sizeof(struct op));
+  OpStackNode opNode;
+  opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
+  opNode->data=(operator*)checked_malloc(sizeof(struct op));
+  opNode->next=(opStackNode)checked_malloc(sizeof(struct opstack));
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
@@ -605,7 +604,7 @@ else{
     //while not matching (
     while (strcmp(opStackHead->data->data,"(")!=0)
       //pop and combine shit
-      popAndCombine(curCom, comNode);
+      popAndCombine();
     //create subshell command and push it to command stack
       curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
@@ -623,7 +622,7 @@ else{
       //while next operator on stack has greater or equal precedence than curOp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-       popAndCombine(curCom, comNode);
+       popAndCombine();
      }
      pushOp(opNode);
    }  
@@ -637,7 +636,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
         //pop and combine shit
-        popAndCombine(curCom, comNode);
+        popAndCombine();
       }
       pushOp(opNode);
     }  
@@ -651,7 +650,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-         popAndCombine(curCom, comNode);
+         popAndCombine();
        }
        pushOp(opNode);
      }  
@@ -704,7 +703,7 @@ else{
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i-1);
               i=j-1;
               break;
             }
@@ -739,7 +738,7 @@ else{
  {
   newTreeFlg2 = true;
   while(comStackHead->next)
-    popAndCombine(curCom, comNode);
+    popAndCombine();
 }
 
 if (inputFlg)
@@ -749,7 +748,57 @@ if (outputFlg)
 
 }
 
-void popAndCombine(command_t curCom, comStackNode comNode){
+void popAndCombine(){
+//initialize new opStackNode
+  OpStackNode operNode;
+  operNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
+  operNode->data=(operator*)checked_malloc(sizeof(struct op));
+  operNode->next=(opStackNode)checked_malloc(sizeof(struct opstack));
+  operNode=popOp(opStackHead);
+
+
+//define command
+  command_t currentCom;
+  currentCom=(command_t)checked_malloc(sizeof(struct command));
+  comStackNode commandNode;
+  commandNode=(comStackNode)checked_malloc(sizeof(struct comstack));
+  commandNode->data=(command_t)checked_malloc(sizeof(struct command));
+  commandNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
+
+  if (strcmp(operNode->data->data,"|")==0)
+    currentCom->type = PIPE_COMMAND;
+  if (strcmp(operNode->data->data,"||")==0) 
+    currentCom->type = OR_COMMAND;
+  if (strcmp(operNode->data->data,"&&")==0)
+    currentCom->type = AND_COMMAND;
+  if (strcmp(operNode->data->data,";")==0)
+    currentCom->type = SEQUENCE_COMMAND;
+//pop two commands and combine them to be a new command
+  currentCom->u.command[1] = popCom(comStackHead)->data;
+  currentCom->u.command[0] = popCom(comStackHead)->data;
+//push new combined command onto command stack
+  commandNode->data = currentCom;
+  commandNode->next = NULL;
+  pushCom(commandNode);
+}
+
+
+//DEAL WITH A<B>C<D...
+char* substring(char* s, int l)
+{
+  char *sub=malloc(l+1);
+  int c=0;
+  while(c<l)
+  {
+    *(sub+c)=s[c];
+    c++;
+  }
+  *(sub+c)='\0';
+  return sub;
+}
+
+
+/*OLD IMPLEMENTATION: void popAndCombine(command_t curCom, comStackNode comNode){
 //define command type
   if (strcmp(curOp->data,"|")==0)
     curCom->type = PIPE_COMMAND;
@@ -768,18 +817,4 @@ void popAndCombine(command_t curCom, comStackNode comNode){
   pushCom(comNode);
   curOp = popOp(opStackHead);
 }
-
-
-//DEAL WITH A<B>C<D...
-char* substring(char* s, int l)
-{
-  char *sub=malloc(l+1);
-  int c=0;
-  while(c<l)
-  {
-    *(sub+c)=s[c];
-    c++;
-  }
-  *(sub+c)='\0';
-  return sub;
-}
+*/
