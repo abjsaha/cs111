@@ -261,7 +261,7 @@ if(flgFirst!=0)
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           globalFlg=0;
-          reallocSize=512;
+          //reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c;
@@ -278,7 +278,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          reallocSize=512;
+          //reallocSize=512;
           globalFlg=0;
           reallocate();
           growTree(";",0,inputGlobalFlag,outputGlobalFlag);
@@ -301,7 +301,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          reallocSize=512;
+          //reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c;
@@ -319,7 +319,7 @@ if(flgFirst!=0)
           }
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
-          reallocSize=512;
+          //reallocSize=512;
           reallocate();
           tempArray[reallocCheck++]=c;
           return c; 
@@ -340,7 +340,7 @@ if(flgFirst!=0)
       }
       memset(tempArray,0,strlen(tempArray));
       reallocCheck=0;
-      reallocSize=512;
+      //reallocSize=512;
       reallocate();
 
       tempArray[reallocCheck++]=c;
@@ -359,7 +359,7 @@ if(flgFirst!=0)
         }
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
-        reallocSize=512;
+        //reallocSize=512;
         reallocate();
 
         tempArray[reallocCheck++]=c;
@@ -377,7 +377,7 @@ if(flgFirst!=0)
         }
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
-        reallocSize=512;
+        //reallocSize=512;
         reallocate();
 
         tempArray[reallocCheck++]=c;
@@ -410,7 +410,7 @@ if(flgFirst!=0)
 
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
-        reallocSize=512;
+        //reallocSize=512;
         reallocate();
         
 
@@ -479,7 +479,7 @@ if(flgFirst!=0)
             {
               memset(tempArray,0,strlen(tempArray));
               reallocCheck=0;
-              reallocSize=512;
+              //reallocSize=512;
               reallocate();
               tempArray[reallocCheck++]=c;
               globalFlg=0;
