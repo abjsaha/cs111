@@ -683,34 +683,42 @@ else{
        for(i=0;i<strlen(tmp)-1;i++)
        {
         if(tmp[i]==' '||i==0)
-        {
+        { 
           for(j=i+1;j<strlen(tmp);j++)
           {
+            if(tmp[i]==' '&&tmp[j]==' '&&j-i==1)
+            {
+              break;
+            }
             if(i==0&&tmp[j]==' ')
             {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-              i=j;
+              curCom->u.word[wordCounter++]=substring(&tmp[i],j-i);
+              i=j-1;
+              break;
             }
-            else if(tmp[j]==' ')
+            else if(tmp[j]==' '&&i!=0)
             {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-              i=j;
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
+              i=j-1;
+              break;
             }
             else if(j==strlen(tmp)-1)
             {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i+1);
-              i=j;
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
+              i=j-1;
+              break;
             }
           }
+        }
         }
       }
       if(strlen(tmp)==1)
