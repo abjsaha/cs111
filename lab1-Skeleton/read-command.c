@@ -600,6 +600,9 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   opNode->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
 
 if (newTreeFlg2){  //reached end of entire command
+  //pop and combine the rest of the shit
+  while(opStackHead->data)
+    popAndCombine();
   //add tree to stream
   command_t nodeToAdd = popCom()->data;
   addToCommandStream(comStreamT, nodeToAdd);
@@ -769,12 +772,7 @@ else {
 
 
 if (newTreeFlg)
-{
   newTreeFlg2 = true;
-  while(opStackHead->data)
-    popAndCombine();
-}
-
 if (inputFlg)
   inputFlg2 = true;
 if (outputFlg)
