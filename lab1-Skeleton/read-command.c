@@ -70,6 +70,7 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 OpStackNode popOp(OpStackNode current)
 {
   OpStackNode tmp = current;
+  tmp->next=NULL;
   current=current->next;
   return tmp;
 }
@@ -81,6 +82,7 @@ void pushOp(OpStackNode current)
 comStackNode popCom(comStackNode cur)
 {
   comStackNode tmp = cur;
+  tmp->next=NULL;
   cur=cur->next;
   return tmp;
 }
