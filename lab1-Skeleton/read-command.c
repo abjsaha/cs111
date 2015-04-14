@@ -262,7 +262,8 @@ if(flgFirst!=0)
           reallocCheck=0;
           globalFlg=0;
           //reallocSize=512;
-          reallocate();
+          //reallocate();
+          tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
           tempArray[reallocCheck++]=c;
           return c;
         }
@@ -280,7 +281,8 @@ if(flgFirst!=0)
           reallocCheck=0;
           //reallocSize=512;
           globalFlg=0;
-          reallocate();
+          //reallocate();
+          tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
           growTree(";",0,inputGlobalFlag,outputGlobalFlag);
           tempArray[reallocCheck++]=c;
           return c;
@@ -302,7 +304,8 @@ if(flgFirst!=0)
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           //reallocSize=512;
-          reallocate();
+          //reallocate();
+          tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
           tempArray[reallocCheck++]=c;
           return c;
         }
@@ -320,7 +323,8 @@ if(flgFirst!=0)
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           //reallocSize=512;
-          reallocate();
+          //reallocate();
+          tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
           tempArray[reallocCheck++]=c;
           return c; 
         }
@@ -341,7 +345,8 @@ if(flgFirst!=0)
       memset(tempArray,0,strlen(tempArray));
       reallocCheck=0;
       //reallocSize=512;
-      reallocate();
+      //reallocate();
+      tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
 
       tempArray[reallocCheck++]=c;
         //realloc
@@ -360,7 +365,8 @@ if(flgFirst!=0)
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
-        reallocate();
+        //reallocate();
+        tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
 
         tempArray[reallocCheck++]=c;
         return c;
@@ -378,8 +384,8 @@ if(flgFirst!=0)
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
-        reallocate();
-
+        //reallocate();
+        tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
         tempArray[reallocCheck++]=c;
         //realloc
         return c;
@@ -411,8 +417,8 @@ if(flgFirst!=0)
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
-        reallocate();
-        
+        //reallocate();
+        tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
 
         tempArray[reallocCheck++]=c;
         //realloc
@@ -480,7 +486,8 @@ if(flgFirst!=0)
               memset(tempArray,0,strlen(tempArray));
               reallocCheck=0;
               //reallocSize=512;
-              reallocate();
+              //reallocate();
+              tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
               tempArray[reallocCheck++]=c;
               globalFlg=0;
               //realloc
