@@ -575,8 +575,8 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   curCom=(command_t)checked_malloc(sizeof(struct command));
   comStackNode comNode;
   comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
-  comNode->data=(command*)checked_malloc(sizeof(command));
-  comNode->next=(command*)checked_malloc(sizeof(command));
+  comNode->data=(command*)checked_malloc(sizeof(struct command));
+  comNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
