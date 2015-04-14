@@ -44,11 +44,10 @@ comStackNode comStackHead;
 OpStackNode opStackHead;
 command_stream_t comStreamT;
 operator* curOp;
-command_t curCom;
 OpStackNode opNode;
 comStackNode comNode;
 bool newTreeFlg2 = false;
-void popAndCombine();
+void popAndCombine(command_t curCom);
 bool inputFlg2 = false;
 bool outputFlg2 = false;
 char* substring(char* s, int l);
@@ -112,7 +111,6 @@ make_command_stream (int (*get_next_byte) (void *),
  comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
  curOp=(operator*)checked_malloc(sizeof(struct op));
    //curOp->data=(char*)checked_realloc(INITIAL_SIZE*sizeof(char));
- curCom=(command_t)checked_malloc(sizeof(struct command));
  opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
    //opNode->data = (op*)checked_malloc(sizeof(op)); 
    //opNode->data->data=(char*)checked_malloc(INITIAL_SIZE*sizeof(char))
@@ -165,7 +163,7 @@ make_command_stream (int (*get_next_byte) (void *),
       }
     }
     //test: printf("\n reached end of file.");
-    popAndCombine();
+    popAndCombine(curCom);
     //add tree to stream
     command_t nodeToAdd = popCom(comStackHead)->data;
     addToCommandStream(comStreamT, nodeToAdd);
@@ -574,6 +572,9 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   outputGlobalFlag=0;
   twoConsNewLines=0;
 
+//local curCom
+command_t curCom;
+curCom=(command_t)checked_malloc(sizeof(struct command));
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
@@ -602,7 +603,7 @@ else{
     //while not matching (
     while (strcmp(opStackHead->data->data,"(")!=0)
       //pop and combine shit
-      popAndCombine();
+      popAndCombine(curCom);
     //create subshell command and push it to command stack
       curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
@@ -620,7 +621,7 @@ else{
       //while next operator on stack has greater or equal precedence than curOp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-       popAndCombine();
+       popAndCombine(curCom);
      }
      pushOp(opNode);
    }  
@@ -634,7 +635,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
         //pop and combine shit
-        popAndCombine();
+        popAndCombine(curCom);
       }
       pushOp(opNode);
     }  
@@ -648,7 +649,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-         popAndCombine();
+         popAndCombine(curCom);
        }
        pushOp(opNode);
      }  
@@ -731,7 +732,7 @@ if (newTreeFlg)
 {
   newTreeFlg2 = true;
   while(comStackHead->next)
-    popAndCombine();
+    popAndCombine(curCom);
 }
 
 if (inputFlg)
@@ -741,7 +742,7 @@ if (outputFlg)
 
 }
 
-void popAndCombine(){
+void popAndCombine(command_t curCom){
 //define command type
   if (strcmp(curOp->data,"|")==0)
     curCom->type = PIPE_COMMAND;
