@@ -130,7 +130,7 @@ make_command_stream (int (*get_next_byte) (void *),
   if(c==EOF)
   {
     if(lastSentOp)
-      error (1, 0, "not implemented");
+      error (2, 0, "not implemented");
     if(globalFlg)
     {
       if(twoConsNewLines)
