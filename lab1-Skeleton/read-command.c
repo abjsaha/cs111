@@ -771,7 +771,7 @@ else {
 if (newTreeFlg)
 {
   newTreeFlg2 = true;
-  while(comStackHead->next)
+  while(opStackHead->data)
     popAndCombine();
 }
 
