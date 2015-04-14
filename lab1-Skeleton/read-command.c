@@ -197,7 +197,6 @@ make_command_stream (int (*get_next_byte) (void *),
  }
  else
  {
-  if(prev=='`'||prev=='>'||prev=='<'||prev==';')
       
   prev=handleCharacter(c,prev,index);
   //test: printf("\n Previous charcter is %c",prev);
