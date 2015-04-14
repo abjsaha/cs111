@@ -46,7 +46,7 @@ command_stream_t comStreamT;
 operator* curOp;
 OpStackNode opNode;
 bool newTreeFlg2 = false;
-void popAndCombine(command_t curCom);
+void popAndCombine(command_t curCom, comStackNode comNode);
 bool inputFlg2 = false;
 bool outputFlg2 = false;
 char* substring(char* s, int l);
@@ -605,7 +605,7 @@ else{
     //while not matching (
     while (strcmp(opStackHead->data->data,"(")!=0)
       //pop and combine shit
-      popAndCombine(curCom);
+      popAndCombine(curCom, comNode);
     //create subshell command and push it to command stack
       curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
@@ -623,7 +623,7 @@ else{
       //while next operator on stack has greater or equal precedence than curOp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-       popAndCombine(curCom);
+       popAndCombine(curCom, comNode);
      }
      pushOp(opNode);
    }  
@@ -637,7 +637,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
         //pop and combine shit
-        popAndCombine(curCom);
+        popAndCombine(curCom, comNode);
       }
       pushOp(opNode);
     }  
@@ -651,7 +651,7 @@ else{
       //while next operator on stack has greater or equal precedence than tmp
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
-         popAndCombine(curCom);
+         popAndCombine(curCom, comNode);
        }
        pushOp(opNode);
      }  
@@ -739,7 +739,7 @@ else{
  {
   newTreeFlg2 = true;
   while(comStackHead->next)
-    popAndCombine(curCom);
+    popAndCombine(curCom, comNode);
 }
 
 if (inputFlg)
@@ -749,7 +749,7 @@ if (outputFlg)
 
 }
 
-void popAndCombine(command_t curCom){
+void popAndCombine(command_t curCom, comStackNode comNode){
 //define command type
   if (strcmp(curOp->data,"|")==0)
     curCom->type = PIPE_COMMAND;
