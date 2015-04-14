@@ -106,7 +106,10 @@ make_command_stream (int (*get_next_byte) (void *),
  comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
  opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
  comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
-
+ opStackHead->next=NULL;
+ comStackHead->next=NULL;
+ comStreamT->head=NULL;
+ comStreamT->tail=NULL;
  int index=0;
  char prev=' ';
  while(1)
