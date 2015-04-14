@@ -787,7 +787,7 @@ void popAndCombine(){
     currentCom->type = SEQUENCE_COMMAND;
 //pop two commands and combine them to be a new command
   currentCom->u.command[1] = popCom()->data;
-  currentCom->u.command[0] = popCom())->data;
+  currentCom->u.command[0] = popCom()->data;
 //push new combined command onto command stack
   commandNode->data = currentCom;
   commandNode->next = NULL;
