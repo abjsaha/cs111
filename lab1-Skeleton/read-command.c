@@ -607,8 +607,6 @@ if (newTreeFlg2){  //reached end of entire command
   command_t nodeToAdd = popCom()->data;
   addToCommandStream(nodeToAdd);
   //clear stacks
-  comStackHead = NULL;
-  opStackHead = NULL;
   newTreeFlg2 = false;
 }
 
