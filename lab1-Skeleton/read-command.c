@@ -660,7 +660,7 @@ if (newTreeFlg2){  //reached end of entire command
       //pop and combine shit
       popAndCombine();
       if (!opStackHead->data)
-        break;
+        error (1, 0, "no matching parenthesis");
     }
     //create subshell command and push it to command stack
     curCom->type = SUBSHELL_COMMAND;
