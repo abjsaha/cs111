@@ -67,11 +67,11 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
   }
 }
 
-OpStackNode popOp(OpStackNode current)
+OpStackNode popOp()
 {
-  OpStackNode tmp = current;
+  OpStackNode tmp = opStackHead;
   tmp->next=NULL;
-  current=current->next;
+  opStackHead=opStackHead->next;
   return tmp;
 }
 void pushOp(OpStackNode current)
@@ -79,11 +79,11 @@ void pushOp(OpStackNode current)
   current->next=opStackHead;
   opStackHead=current;
 }
-comStackNode popCom(comStackNode cur)
+comStackNode popCom()
 {
-  comStackNode tmp = cur;
+  comStackNode tmp = comStackHead;
   tmp->next=NULL;
-  cur=cur->next;
+  comStackHead=comStackHead->next;
   return tmp;
 }
 void pushCom(comStackNode cur)
@@ -160,7 +160,7 @@ make_command_stream (int (*get_next_byte) (void *),
     //test: printf("\n reached end of file.");
     popAndCombine();
     //add tree to stream
-    command_t nodeToAdd = popCom(comStackHead)->data;
+    command_t nodeToAdd = popCom()->data;
     addToCommandStream(comStreamT, nodeToAdd);
     //clear stacks
     comStackHead = NULL;
@@ -591,7 +591,7 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
-  command_t nodeToAdd = popCom(comStackHead)->data;
+  command_t nodeToAdd = popCom()->data;
   addToCommandStream(comStreamT, nodeToAdd);
   //clear stacks
   comStackHead = NULL;
@@ -670,14 +670,14 @@ else{
      else {
       if (inputFlg2){
       //set tmp as the input of the top of command stack then push it back on command stack
-        comNode = popCom(comStackHead);
+        comNode = popCom();
         comNode->data->input = substring(tmp, strlen(tmp));
         pushCom(comNode);
         inputFlg2 = false;
       }
       else if (outputFlg2){
       //set tmp as output of the top of command stack then push it back on command stack
-        comNode = popCom(comStackHead);
+        comNode = popCom();
         comNode->data->output = substring(tmp, strlen(tmp)); 
         pushCom(comNode);
         outputFlg2 = false;
@@ -766,7 +766,7 @@ void popAndCombine(){
   operNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
   operNode->data=(operator*)checked_malloc(sizeof(struct op));
   operNode->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
-  operNode=popOp(opStackHead);
+  operNode=popOp();
 
 
 //define command
@@ -786,8 +786,8 @@ void popAndCombine(){
   if (strcmp(operNode->data->data,";")==0)
     currentCom->type = SEQUENCE_COMMAND;
 //pop two commands and combine them to be a new command
-  currentCom->u.command[1] = popCom(comStackHead)->data;
-  currentCom->u.command[0] = popCom(comStackHead)->data;
+  currentCom->u.command[1] = popCom()->data;
+  currentCom->u.command[0] = popCom())->data;
 //push new combined command onto command stack
   commandNode->data = currentCom;
   commandNode->next = NULL;
