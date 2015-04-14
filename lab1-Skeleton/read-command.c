@@ -607,6 +607,8 @@ if (newTreeFlg2){  //reached end of entire command
   command_t nodeToAdd = popCom()->data;
   addToCommandStream(nodeToAdd);
   //malloc stacks
+  free(comStackHead);
+  free(opStackHead);
   comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
   opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
   comStackHead->next=NULL;
