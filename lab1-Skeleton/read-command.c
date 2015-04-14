@@ -550,7 +550,7 @@ outputGlobalFlag=0;
 void reallocate()
 {
   reallocSize*=2;
-  tempArray=(char*)checked_realloc(tempArray,reallocSize);
+  tempArray=(char*)checked_grow_alloc(tempArray,reallocSize);
 }
 
 
