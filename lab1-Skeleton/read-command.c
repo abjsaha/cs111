@@ -704,7 +704,7 @@ else{
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
+              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i-1);
               i=j-1;
               break;
             }
