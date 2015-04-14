@@ -181,8 +181,14 @@ make_command_stream (int (*get_next_byte) (void *),
   }
   if(index==0)
   {
+    if(c==";"||c=='<'||c=='>'||c==')'||c=='|'||c=='&')
+    {
+      error (1, 0, "not implemented");
+    }
     prev=handleCharacter(c,'-',index);
     //test: printf("\n Previous charcter is %c",prev);
+    if(prev==' ')
+      index=0;
     if(prev==';')
     {
      prev=' ';
@@ -191,6 +197,8 @@ make_command_stream (int (*get_next_byte) (void *),
  }
  else
  {
+  if(prev=='`'||prev=='>'||prev=='<'||prev==';')
+      
   prev=handleCharacter(c,prev,index);
   //test: printf("\n Previous charcter is %c",prev);
 }
@@ -541,6 +549,10 @@ if(flgFirst!=0)
 }
 else
 {
+  if(c==' ')
+  {
+    return c;
+  }
   if(c=='\n')
   {
     c=';';
