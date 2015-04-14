@@ -274,7 +274,6 @@ if(flgFirst!=0)
 {
   if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
   {
-    lastSentOp=false;
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')//if current is not a special character and previous is not a special character
     {
       tempArray[reallocCheck++]=c;
@@ -298,7 +297,9 @@ if(flgFirst!=0)
             while(tempArray[strlen(tempArray)-1]==' ')
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 1,inputGlobalFlag,outputGlobalFlag);
+            
           }
+          lastSentOp=false;
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           globalFlg=0;
@@ -318,6 +319,7 @@ if(flgFirst!=0)
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
+          lastSentOp=false;
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           //reallocSize=512;
@@ -326,6 +328,7 @@ if(flgFirst!=0)
           tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
           growTree(";",0,inputGlobalFlag,outputGlobalFlag);
           tempArray[reallocCheck++]=c;
+
           return c;
         }
       }
@@ -342,6 +345,7 @@ if(flgFirst!=0)
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
+          lastSentOp=false;
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           //reallocSize=512;
@@ -361,6 +365,7 @@ if(flgFirst!=0)
               tempArray[strlen(tempArray)-1]='\0';
             growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
           }
+          lastSentOp=false;
           memset(tempArray,0,strlen(tempArray));
           reallocCheck=0;
           //reallocSize=512;
@@ -383,6 +388,7 @@ if(flgFirst!=0)
           tempArray[strlen(tempArray)-1]='\0';
         growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
       }
+      lastSentOp=false;
       memset(tempArray,0,strlen(tempArray));
       reallocCheck=0;
       //reallocSize=512;
@@ -403,6 +409,7 @@ if(flgFirst!=0)
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
+        lastSentOp=false;
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
@@ -422,6 +429,7 @@ if(flgFirst!=0)
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
+        lastSentOp=false;
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
@@ -435,12 +443,12 @@ if(flgFirst!=0)
   }
   else//if current is a special character
   {
-    lastSentOp=true;
     //if current is a special character and previous is not
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
       if(c=='\n') //a \n
       {
+        lastSentOp=false;
         globalFlg=1;
         return c;
       }
@@ -454,7 +462,7 @@ if(flgFirst!=0)
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
-
+        lastSentOp=true;
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
@@ -471,11 +479,12 @@ if(flgFirst!=0)
       if(c=='\n'&&prev!='\n')//| \n
       {
         globalFlg=0;
-
+        lastSentOp=true;
         return c;
       }
       else if(c=='\n'&&prev=='\n')//\n \n
       {
+        lastSentOp=false;
         twoConsNewLines=1;
         if(globalFlg)
         {
@@ -492,7 +501,7 @@ if(flgFirst!=0)
        {
         reallocate();
       }
-
+      lastSentOp=false;
       tempArray[reallocCheck++]=c;
         //realloc
       return c;
@@ -509,6 +518,7 @@ if(flgFirst!=0)
              {
                reallocate();
              }
+             lastSentOp=true;
              globalFlg=0;
              tempArray[reallocCheck++]=c;
               //realloc
@@ -524,6 +534,7 @@ if(flgFirst!=0)
           {
             if (globalFlg)//a \n |
             {
+              lastSentOp=true;
               memset(tempArray,0,strlen(tempArray));
               reallocCheck=0;
               //reallocSize=512;
