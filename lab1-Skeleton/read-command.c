@@ -616,8 +616,7 @@ if (newTreeFlg2){  //reached end of entire command
   newTreeFlg2 = false;
 }
 
-else{
-  //curOp->data=(char*)checked_realloc(sizeof(tmp));
+
 
   //determine if tmp is an operator
   //if it is an operator, set fields of curOp
@@ -770,8 +769,6 @@ else {
   pushCom(comNode);
 }
 
-
-}
 }
 
 
