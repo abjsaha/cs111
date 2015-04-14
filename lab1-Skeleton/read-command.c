@@ -73,8 +73,8 @@ OpStackNode popOp()
   //tmp->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
   if(tmp)
   {
-    tmp->next=NULL;
     opStackHead=opStackHead->next;
+    tmp->next=NULL;
   }
   return tmp;
 }
@@ -89,8 +89,8 @@ comStackNode popCom()
   //tmp->next=(comStackNode)checked_malloc(sizeof(struct comstack));
   if(tmp)
   {
-    tmp->next=NULL;
     comStackHead=comStackHead->next;
+    tmp->next=NULL;
   }
   return tmp;
 }
