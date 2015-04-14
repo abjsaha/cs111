@@ -634,25 +634,6 @@ else
 }
 
 
-/*test:  void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
-{
-twoConsNewLines=0;
-if(newTreeFlg)
-{
-  //printf("\n\t\tNEW TREE");
-}
-if(inputGlobalFlag)
-{
-  //printf("\n\t\tinputFlg");
-}
-if(outputGlobalFlag)
-{
-  //printf("\n\t\toutputFlg");
-}
-//printf("\n\tTemp is %s",tmp);
-inputGlobalFlag=0;
-outputGlobalFlag=0;
-}*/
 void reallocate()
 {
   reallocSize*=2;
@@ -879,8 +860,6 @@ void popAndCombine(){
   currentCom=(command_t)checked_malloc(sizeof(struct command));
   comStackNode commandNode;
   commandNode=(comStackNode)checked_malloc(sizeof(struct comstack));
-  //commandNode->data=(command_t)checked_malloc(sizeof(struct command));
-  //commandNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
 
   if (strcmp(operNode->data->data,"|")==0)
     currentCom->type = PIPE_COMMAND;
@@ -900,7 +879,6 @@ void popAndCombine(){
 }
 
 
-//DEAL WITH A<B>C<D...
 char* substring(char* s, int l)
 {
   char *sub=malloc(l+1);
@@ -913,25 +891,3 @@ char* substring(char* s, int l)
   *(sub+c)='\0';
   return sub;
 }
-
-
-/*OLD IMPLEMENTATION: void popAndCombine(command_t curCom, comStackNode comNode){
-//define command type
-  if (strcmp(curOp->data,"|")==0)
-    curCom->type = PIPE_COMMAND;
-  if (strcmp(curOp->data,"||")==0) 
-    curCom->type = OR_COMMAND;
-  if (strcmp(curOp->data,"&&")==0)
-    curCom->type = AND_COMMAND;
-  if (strcmp(curOp->data,";")==0)
-  curCom->type = SEQUENCE_COMMAND;
-//pop two commands and combine them to be a new command
-  curCom->u.command[1] = popCom(comStackHead)->data;
-  curCom->u.command[0] = popCom(comStackHead)->data;
-//push new combined command onto command stack
-  comNode->data = curCom;
-  comNode->next = NULL;
-  pushCom(comNode);
-  curOp = popOp(opStackHead);
-}
-*/
