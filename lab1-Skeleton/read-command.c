@@ -229,7 +229,7 @@ char handleCharacter(char c, char prev, int flgFirst)
   }
   else if(comment&&c=='\n')
   {
-    comment=true;
+    comment=false;
     return c;
   }
   if(c=='#')
