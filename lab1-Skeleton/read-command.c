@@ -547,7 +547,7 @@ if(flgFirst!=0)
           {
             if(globalFlg)//a \n \n |
             {
-              error (1, 0, "|||");
+              error (1, 0, "a \n \n |");
               exit(0);
              if(reallocCheck==reallocSize)
              {
@@ -569,7 +569,7 @@ if(flgFirst!=0)
           {
             if (globalFlg)//a \n |
             {
-              error (1, 0, "|||");
+              error (1, 0, "a \n |");
               exit(0);
               lastSentOp=true;
               memset(tempArray,0,strlen(tempArray));
