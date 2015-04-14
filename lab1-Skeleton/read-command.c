@@ -214,7 +214,7 @@ read_command_stream (command_stream_t s)
   return NULL;
 }
 
-
+bool comment=false;
 int reallocSize=1024;
 int reallocCheck=0;
 int outputGlobalFlag=0;
@@ -223,6 +223,20 @@ int inputGlobalFlag2=0;
 int outputGlobalFlag2=0;
 char handleCharacter(char c, char prev, int flgFirst)
 {
+  if(comment&&c!='\n')
+  {
+    return c;
+  }
+  else if(comment&&c=='\n')
+  {
+    comment=true;
+    return c;
+  }
+  if(c=='#')
+  {
+    comment=true;
+    return c;
+  }
 if(c=='>')//>
 {
   outputGlobalFlag=1;
