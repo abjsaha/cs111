@@ -625,7 +625,7 @@ else{
     while (strcmp(opStackHead->data->data,"(")!=0){
       //pop and combine shit
       popAndCombine();
-      if (!opStackHead->)
+      if (!opStackHead->data)
         break;
     }
     //create subshell command and push it to command stack
