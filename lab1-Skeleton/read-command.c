@@ -476,6 +476,16 @@ if(flgFirst!=0)
     }
     else //if current is a special character and previous is a special character
     {
+      if(c=='<'&&prev=='<')
+      {
+        error (1, 0, "<<");
+        exit(0);
+      }
+      if(c=='>'&&prev=='>')
+      {
+        error (1, 0, ">>");
+        exit(0);
+      }
       if(c=='\n'&&prev!='\n')//| \n
       {
         globalFlg=0;
