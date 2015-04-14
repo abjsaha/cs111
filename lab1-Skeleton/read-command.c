@@ -769,8 +769,8 @@ void popAndCombine(){
   currentCom=(command_t)checked_malloc(sizeof(struct command));
   comStackNode commandNode;
   commandNode=(comStackNode)checked_malloc(sizeof(struct comstack));
-  commandNode->data=(command_t)checked_malloc(sizeof(struct command));
-  commandNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
+  //commandNode->data=(command_t)checked_malloc(sizeof(struct command));
+  //commandNode->next=(comStackNode)checked_malloc(sizeof(struct comstack));
 
   if (strcmp(operNode->data->data,"|")==0)
     currentCom->type = PIPE_COMMAND;
