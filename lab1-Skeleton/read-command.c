@@ -575,7 +575,7 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   OpStackNode opNode;
   opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
   opNode->data=(operator*)checked_malloc(sizeof(struct op));
-  opNode->next=(opStackNode)checked_malloc(sizeof(struct opstack));
+  opNode->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
