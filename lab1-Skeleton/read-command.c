@@ -45,7 +45,6 @@ OpStackNode opStackHead;
 command_stream_t comStreamT;
 operator* curOp;
 OpStackNode opNode;
-comStackNode comNode;
 bool newTreeFlg2 = false;
 void popAndCombine(command_t curCom);
 bool inputFlg2 = false;
@@ -114,7 +113,6 @@ make_command_stream (int (*get_next_byte) (void *),
  opNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
    //opNode->data = (op*)checked_malloc(sizeof(op)); 
    //opNode->data->data=(char*)checked_malloc(INITIAL_SIZE*sizeof(char))
- comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
    //comNode->data=(command*)checked_malloc(sizeof(command));
 
  int index=0;
@@ -572,9 +570,11 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
   outputGlobalFlag=0;
   twoConsNewLines=0;
 
-//local curCom
-command_t curCom;
-curCom=(command_t)checked_malloc(sizeof(struct command));
+//local curCom and comNode
+  command_t curCom;
+  curCom=(command_t)checked_malloc(sizeof(struct command));
+  comStackNode comNode;
+  comNode=(comStackNode)checked_malloc(sizeof(struct comstack));
 
 if (newTreeFlg2){  //reached end of entire command
   //add tree to stream
