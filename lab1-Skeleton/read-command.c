@@ -48,22 +48,22 @@ void popAndCombine();
 bool inputFlg2 = false;
 bool outputFlg2 = false;
 char* substring(char* s, int l);
-command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
+command_node_t addToCommandStream(command_t newNode)
 {
 //if steam is empty
   command_node_t temp=(command_node_t)checked_malloc(sizeof(struct commandNode));
   temp->rootCommand=newNode;
-  if (!stream->head)
+  if (!comStreamT->head)
   {
-    stream->head = temp;
-    stream->tail = temp;
+    comStreamT->head = temp;
+    comStreamT->tail = temp;
   }
 //if stream is not empty, add to end of stream
   else
   {
-    stream->tail->next = temp;
-    stream->tail = stream->tail->next;
-    stream->tail->next=NULL;
+    comStreamT->tail->next = temp;
+    comStreamT->tail = comStreamT->tail->next;
+    comStreamT->tail->next=NULL;
   }
 }
 
@@ -171,7 +171,7 @@ make_command_stream (int (*get_next_byte) (void *),
     }
     //add tree to stream
     command_t nodeToAdd = popCom()->data;
-    addToCommandStream(comStreamT, nodeToAdd);
+    addToCommandStream(nodeToAdd);
     //clear stacks
     comStackHead = NULL;
     opStackHead = NULL;
@@ -605,7 +605,7 @@ if (newTreeFlg2){  //reached end of entire command
     popAndCombine();
   //add tree to stream
   command_t nodeToAdd = popCom()->data;
-  addToCommandStream(comStreamT, nodeToAdd);
+  addToCommandStream(nodeToAdd);
   //clear stacks
   comStackHead = NULL;
   opStackHead = NULL;
