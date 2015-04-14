@@ -106,6 +106,7 @@ void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg);
 char* tempArray;
 int globalFlg=0;
 int twoConsNewLines=0;
+bool lastSentOp=false;
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
  void *get_next_byte_argument)
@@ -122,7 +123,6 @@ make_command_stream (int (*get_next_byte) (void *),
  comStreamT->tail=NULL;
  int index=0;
  char prev=' ';
- bool lastSentOp=false;
  while(1)
  {
   c=get_next_byte(get_next_byte_argument);
