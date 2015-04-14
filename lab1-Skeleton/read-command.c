@@ -181,7 +181,7 @@ make_command_stream (int (*get_next_byte) (void *),
   }
   if(index==0)
   {
-    if(c==";"||c=='<'||c=='>'||c==')'||c=='|'||c=='&')
+    if(c==";"||c=='<'||c=='>'||c==')'||c=='|'||c=='&'||c=='`')
     {
       error (1, 0, "not implemented");
     }
