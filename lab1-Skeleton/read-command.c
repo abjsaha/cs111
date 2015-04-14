@@ -547,6 +547,8 @@ if(flgFirst!=0)
           {
             if(globalFlg)//a \n \n |
             {
+             error (1, 0, "a \n \n |");
+             exit(0); 
              if(reallocCheck==reallocSize)
              {
                reallocate();
