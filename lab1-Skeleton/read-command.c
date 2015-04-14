@@ -166,7 +166,9 @@ make_command_stream (int (*get_next_byte) (void *),
       }
     }
     //test: printf("\n reached end of file.");
+    while(opStackHead->data){
     popAndCombine();
+    }
     //add tree to stream
     command_t nodeToAdd = popCom()->data;
     addToCommandStream(comStreamT, nodeToAdd);
