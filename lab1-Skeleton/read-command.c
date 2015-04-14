@@ -626,10 +626,10 @@ else{
       //pop and combine shit
       popAndCombine();
       if (!opStackHead)
-          break;
+        break;
     }
     //create subshell command and push it to command stack
-      curCom->type = SUBSHELL_COMMAND;
+    curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
@@ -643,115 +643,118 @@ else{
     if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than curOp
-      while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
+      while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
        //pop and combine shit
        popAndCombine();
        if (!opStackHead)
-          break;
-     }
-     pushOp(opNode);
-   }  
-   else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
-    curOp->data = substring(tmp, strlen(tmp));
-    curOp->precedence = PRECEDENCE_AND_OR;
-    opNode->data = curOp;
-    opNode->next = NULL;
-    if (opStackHead->data){
+        break;
+    }
+  }
+  pushOp(opNode);
+}  
+else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
+  curOp->data = substring(tmp, strlen(tmp));
+  curOp->precedence = PRECEDENCE_AND_OR;
+  opNode->data = curOp;
+  opNode->next = NULL;
+  if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
-      while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
+    while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
         //pop and combine shit
-        popAndCombine();
-        if (!opStackHead)
-          break;
-      }
-      pushOp(opNode);
-    }  
-    else if (strcmp(tmp,";")==0) {
-      curOp->data = substring(tmp, strlen(tmp));
-      curOp->precedence = PRECEDENCE_SEMI_NEWLINE;
-      opNode->data = curOp;
-      opNode->next = NULL;
-      if (opStackHead->data){
+      popAndCombine();
+      if (!opStackHead)
+        break;
+    }
+  }
+  pushOp(opNode);
+}  
+else if (strcmp(tmp,";")==0) {
+  curOp->data = substring(tmp, strlen(tmp));
+  curOp->precedence = PRECEDENCE_SEMI_NEWLINE;
+  opNode->data = curOp;
+  opNode->next = NULL;
+  if (opStackHead->data){
       //if op stack is not empty
       //while next operator on stack has greater or equal precedence than tmp
-        while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
+    while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
        //pop and combine shit
-         popAndCombine();
-         if (!opStackHead)
-          break;
-       }
-       pushOp(opNode);
-     }  
+     popAndCombine();
+     if (!opStackHead)
+      break;
+  }
+}
+pushOp(opNode);
+}  
   //tmp is a simple command
-     else {
-      if (inputFlg2){
+else {
+  if (inputFlg2){
       //set tmp as the input of the top of command stack then push it back on command stack
-        comNode = popCom();
-        comNode->data->input = substring(tmp, strlen(tmp));
-        pushCom(comNode);
-        inputFlg2 = false;
-      }
-      else if (outputFlg2){
+    comNode = popCom();
+    comNode->data->input = substring(tmp, strlen(tmp));
+    pushCom(comNode);
+    inputFlg2 = false;
+  }
+  else if (outputFlg2){
       //set tmp as output of the top of command stack then push it back on command stack
-        comNode = popCom();
-        comNode->data->output = substring(tmp, strlen(tmp)); 
-        pushCom(comNode);
-        outputFlg2 = false;
-      }
-      else{
+    comNode = popCom();
+    comNode->data->output = substring(tmp, strlen(tmp)); 
+    pushCom(comNode);
+    outputFlg2 = false;
+  }
+  else{
       //initialize command and push on command stack
-       curCom=NULL;
-       curCom=(command_t)checked_malloc(sizeof(struct command));
-       curCom->type = SIMPLE_COMMAND;
+   curCom=NULL;
+   curCom=(command_t)checked_malloc(sizeof(struct command));
+   curCom->type = SIMPLE_COMMAND;
       //initialize command's words
         //if(!curCom->u.word)
-       curCom->u.word=(char**)checked_malloc(sizeof(char*)*sizeof(tmp));
-       int i=0, j=0, wordCounter=0;
-       for(i=0;i<strlen(tmp)-1;i++)
-       {
-        if(tmp[i]==' '||i==0)
-        { 
-          for(j=i+1;j<strlen(tmp);j++)
-          {
-            if(tmp[i]==' '&&tmp[j]==' '&&j-i==1)
-            {
-              break;
-            }
-            if(i==0&&tmp[j]==' ')
-            {
+   curCom->u.word=(char**)checked_malloc(sizeof(char*)*sizeof(tmp));
+   int i=0, j=0, wordCounter=0;
+   for(i=0;i<strlen(tmp)-1;i++)
+   {
+    if(tmp[i]==' '||i==0)
+    { 
+      for(j=i+1;j<strlen(tmp);j++)
+      {
+        if(tmp[i]==' '&&tmp[j]==' '&&j-i==1)
+        {
+          break;
+        }
+        if(i==0&&tmp[j]==' ')
+        {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i],j-i);
-              i=j-1;
-              break;
-            }
-            else if(tmp[j]==' '&&i!=0)
-            {
+          curCom->u.word[wordCounter++]=substring(&tmp[i],j-i);
+          i=j-1;
+          break;
+        }
+        else if(tmp[j]==' '&&i!=0)
+        {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i-1);
-              i=j-1;
-              break;
-            }
-            else if(j==strlen(tmp)-1)
-            {
+          curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i-1);
+          i=j-1;
+          break;
+        }
+        else if(j==strlen(tmp)-1)
+        {
               //memcpy(curCom->u.word[wordCounter],&tmp[i+1],j-i+1);
                 //curCom->u.word[wordCounter] = &tmp[i+1];
                 //curCom->u.word[wordCounter++][j-i+1]='\0';
-              curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
-              i=j-1;
-              break;
-            }
-          }
+          curCom->u.word[wordCounter++]=substring(&tmp[i+1],j-i);
+          i=j-1;
+          break;
         }
       }
     }
-    if(strlen(tmp)==1)
+  }
+}
+if(strlen(tmp)==1)
           //curCom->u.word[0]=&tmp[0];
-     curCom->u.word[0]=substring(tmp,strlen(tmp));
+ curCom->u.word[0]=substring(tmp,strlen(tmp));
      comNode->data = curCom; //PROBLEM
      //problem: pushing a comNode that points to curCom, which changes every time tmp changes.
      //i think curOp and curCom should not be global
