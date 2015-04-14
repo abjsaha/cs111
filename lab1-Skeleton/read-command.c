@@ -107,6 +107,8 @@ char* tempArray;
 int globalFlg=0;
 int twoConsNewLines=0;
 bool lastSentOp=false;
+bool lastOr=false;
+bool lastAnd=false;
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
  void *get_next_byte_argument)
@@ -198,7 +200,7 @@ make_command_stream (int (*get_next_byte) (void *),
  }
  else
  {
-  
+
   prev=handleCharacter(c,prev,index);
   //test: printf("\n Previous charcter is %c",prev);
 }
@@ -232,6 +234,18 @@ int inputGlobalFlag2=0;
 int outputGlobalFlag2=0;
 char handleCharacter(char c, char prev, int flgFirst)
 {
+  if(c=='|'&&prev=='|'&&lastOr)
+  {
+    error (1, 0, "|||");
+    exit(0);
+  }
+  if(c=='&'&&prev=='&'&&lastAnd)
+  {
+    error (1, 0, "&&&");
+    exit(0);
+  }
+  lastOr=false;
+  lastAnd=false;
   if(c=='<'&&prev=='<')
   {
     error (1, 0, "<<");
@@ -486,7 +500,7 @@ if(flgFirst!=0)
     }
     else //if current is a special character and previous is a special character
     {
-      
+
       if(c=='\n'&&prev!='\n')//| \n
       {
         globalFlg=0;
@@ -511,6 +525,14 @@ if(flgFirst!=0)
        if(reallocCheck==reallocSize)
        {
         reallocate();
+      }
+      if(c=='|'&&prev=='|')
+      {
+        lastOr=true;
+      }
+      if(c=='&'&&prev=='&&')
+      {
+        lastAnd=true;
       }
       lastSentOp=false;
       tempArray[reallocCheck++]=c;
