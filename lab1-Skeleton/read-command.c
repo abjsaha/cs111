@@ -335,6 +335,10 @@ if(flgFirst!=0)
         }
         else//a \n b
         {
+          if(c==' ')
+          {
+            return prev;
+          }
           if(strcmp(tempArray," ")!=0)
           {
             while(tempArray[0]==' ')
