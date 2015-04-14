@@ -70,8 +70,12 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 OpStackNode popOp()
 {
   OpStackNode tmp = opStackHead;
-  tmp->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
-  opStackHead=opStackHead->next;
+  //tmp->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
+  if(tmp)
+  {
+    tmp->next=NULL;
+    opStackHead=opStackHead->next;
+  }
   return tmp;
 }
 void pushOp(OpStackNode current)
@@ -82,8 +86,12 @@ void pushOp(OpStackNode current)
 comStackNode popCom()
 {
   comStackNode tmp = comStackHead;
-  tmp->next=(comStackNode)checked_malloc(sizeof(struct comstack));
-  comStackHead=comStackHead->next;
+  //tmp->next=(comStackNode)checked_malloc(sizeof(struct comstack));
+  if(tmp)
+  {
+    tmp->next=NULL;
+    comStackHead=comStackHead->next;
+  }
   return tmp;
 }
 void pushCom(comStackNode cur)
@@ -784,7 +792,7 @@ void popAndCombine(){
   if (strcmp(operNode->data->data,"&&")==0)
     currentCom->type = AND_COMMAND;
   if (strcmp(operNode->data->data,";")==0)
-    currentCom->type = SEQUENCE_COMMAND;
+  currentCom->type = SEQUENCE_COMMAND;
 //pop two commands and combine them to be a new command
   currentCom->u.command[1] = popCom()->data;
   currentCom->u.command[0] = popCom()->data;
