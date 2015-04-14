@@ -625,7 +625,7 @@ else{
     while (strcmp(opStackHead->data->data,"(")!=0){
       //pop and combine shit
       popAndCombine();
-      if (!opStackHead)
+      if (!opStackHead->)
         break;
     }
     //create subshell command and push it to command stack
@@ -646,7 +646,7 @@ else{
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
        //pop and combine shit
        popAndCombine();
-       if (!opStackHead)
+       if (!opStackHead->data)
         break;
     }
   }
@@ -663,7 +663,7 @@ else if (strcmp(tmp,"||")==0 || strcmp(tmp,"&&")==0){
     while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
         //pop and combine shit
       popAndCombine();
-      if (!opStackHead)
+      if (!opStackHead->data)
         break;
     }
   }
@@ -680,7 +680,7 @@ else if (strcmp(tmp,";")==0) {
     while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0){
        //pop and combine shit
      popAndCombine();
-     if (!opStackHead)
+     if (!opStackHead->data)
       break;
   }
 }
