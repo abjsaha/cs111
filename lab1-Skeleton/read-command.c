@@ -622,9 +622,12 @@ else{
   }
   else if (strcmp(tmp,")")==0){
     //while not matching (
-    while (strcmp(opStackHead->data->data,"(")!=0)
+    while (strcmp(opStackHead->data->data,"(")!=0){
       //pop and combine shit
       popAndCombine();
+      if (!opStackHead)
+          break;
+    }
     //create subshell command and push it to command stack
       curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
@@ -643,6 +646,8 @@ else{
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
        popAndCombine();
+       if (!opStackHead)
+          break;
      }
      pushOp(opNode);
    }  
@@ -657,6 +662,8 @@ else{
       while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
         //pop and combine shit
         popAndCombine();
+        if (!opStackHead)
+          break;
       }
       pushOp(opNode);
     }  
@@ -671,6 +678,8 @@ else{
         while (opStackHead->data->precedence >= curOp->precedence && strcmp(opStackHead->data->data,"(")!=0)
        //pop and combine shit
          popAndCombine();
+         if (!opStackHead)
+          break;
        }
        pushOp(opNode);
      }  
