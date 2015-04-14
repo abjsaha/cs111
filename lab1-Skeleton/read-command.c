@@ -70,7 +70,7 @@ command_node_t addToCommandStream(command_stream_t stream, command_t newNode)
 OpStackNode popOp()
 {
   OpStackNode tmp = opStackHead;
-  tmp->next=NULL;
+  tmp->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
   opStackHead=opStackHead->next;
   return tmp;
 }
@@ -82,7 +82,7 @@ void pushOp(OpStackNode current)
 comStackNode popCom()
 {
   comStackNode tmp = comStackHead;
-  tmp->next=NULL;
+  tmp->next=(comStackNode)checked_malloc(sizeof(struct comstack));
   comStackHead=comStackHead->next;
   return tmp;
 }
