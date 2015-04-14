@@ -719,13 +719,11 @@ else{
             }
           }
         }
-        }
       }
-      if(strlen(tmp)==1)
-      {
+    }
+    if(strlen(tmp)==1)
           //curCom->u.word[0]=&tmp[0];
-       curCom->u.word[0]=substring(tmp,strlen(tmp));
-     }
+     curCom->u.word[0]=substring(tmp,strlen(tmp));
      comNode->data = curCom; //PROBLEM
      //problem: pushing a comNode that points to curCom, which changes every time tmp changes.
      //i think curOp and curCom should not be global
@@ -735,11 +733,10 @@ else{
      pushCom(comNode);
    }
  }
-}
 
 
-if (newTreeFlg)
-{
+ if (newTreeFlg)
+ {
   newTreeFlg2 = true;
   while(comStackHead->next)
     popAndCombine(curCom);
