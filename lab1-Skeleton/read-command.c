@@ -530,7 +530,7 @@ if(flgFirst!=0)
       {
         lastOr=true;
       }
-      if(c=='&'&&prev=='&&')
+      if(c=='&'&&prev=='&')
       {
         lastAnd=true;
       }
