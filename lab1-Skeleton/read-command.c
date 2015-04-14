@@ -169,7 +169,7 @@ make_command_stream (int (*get_next_byte) (void *),
     }
     //test: printf("\n reached end of file.");
     while(opStackHead->data){
-    popAndCombine();
+      popAndCombine();
     }
     //add tree to stream
     command_t nodeToAdd = popCom()->data;
@@ -198,7 +198,7 @@ make_command_stream (int (*get_next_byte) (void *),
  }
  else
  {
-      
+  
   prev=handleCharacter(c,prev,index);
   //test: printf("\n Previous charcter is %c",prev);
 }
@@ -232,6 +232,16 @@ int inputGlobalFlag2=0;
 int outputGlobalFlag2=0;
 char handleCharacter(char c, char prev, int flgFirst)
 {
+  if(c=='<'&&prev=='<')
+  {
+    error (1, 0, "<<");
+    exit(0);
+  }
+  if(c=='>'&&prev=='>')
+  {
+    error (1, 0, ">>");
+    exit(0);
+  }
   if(comment&&c!='\n')
   {
     return c;
@@ -476,16 +486,7 @@ if(flgFirst!=0)
     }
     else //if current is a special character and previous is a special character
     {
-      if(c=='<'&&prev=='<')
-      {
-        error (1, 0, "<<");
-        exit(0);
-      }
-      if(c=='>'&&prev=='>')
-      {
-        error (1, 0, ">>");
-        exit(0);
-      }
+      
       if(c=='\n'&&prev!='\n')//| \n
       {
         globalFlg=0;
@@ -673,24 +674,24 @@ if (newTreeFlg2){  //reached end of entire command
 
   //determine if tmp is an operator
   //if it is an operator, set fields of curOp
-  if (strcmp(tmp,"(")==0){
-    curOp->data = substring(tmp, strlen(tmp));
-    curOp->precedence = 0;
+if (strcmp(tmp,"(")==0){
+  curOp->data = substring(tmp, strlen(tmp));
+  curOp->precedence = 0;
     //opNode->data = (op*)checked_relloc(sizeof(curOp)); 
-    opNode->data = curOp;
-    opNode->next = NULL;
-    pushOp(opNode);
-  }
-  else if (strcmp(tmp,")")==0){
+  opNode->data = curOp;
+  opNode->next = NULL;
+  pushOp(opNode);
+}
+else if (strcmp(tmp,")")==0){
     //while not matching (
-    while (strcmp(opStackHead->data->data,"(")!=0){
+  while (strcmp(opStackHead->data->data,"(")!=0){
       //pop and combine shit
-      popAndCombine();
-      if (!opStackHead->data)
-        error (1, 0, "no matching parenthesis");
-    }
+    popAndCombine();
+    if (!opStackHead->data)
+      error (1, 0, "no matching parenthesis");
+  }
     //create subshell command and push it to command stack
-    curCom->type = SUBSHELL_COMMAND;
+  curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
@@ -817,9 +818,9 @@ else {
   }
   if(strlen(tmp)==1)
    curCom->u.word[0]=substring(tmp,strlen(tmp));
-  comNode->data = curCom; 
-  comNode->next = NULL;
-  pushCom(comNode);
+ comNode->data = curCom; 
+ comNode->next = NULL;
+ pushCom(comNode);
 }
 
 }
