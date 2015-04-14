@@ -122,13 +122,14 @@ make_command_stream (int (*get_next_byte) (void *),
  comStreamT->tail=NULL;
  int index=0;
  char prev=' ';
+ bool lastSentOp=false;
  while(1)
  {
   c=get_next_byte(get_next_byte_argument);
   //test: printf("\n Next byte is %c",c);
   if(c==EOF)
   {
-    if(prev=='`'||prev=='>'||prev=='<'||prev==';'||prev=="("||prev=='|'||prev=='&')
+    if(lastSentOp)
       error (1, 0, "not implemented");
     if(globalFlg)
     {
@@ -247,6 +248,7 @@ char handleCharacter(char c, char prev, int flgFirst)
   }
 if(c=='>')//>
 {
+  lastSentOp=true;
   outputGlobalFlag=1;
   if(prev=='\n')//\n >
   {
@@ -258,6 +260,7 @@ if(c=='>')//>
 }
 if(c=='<')//<
 {
+  lastSentOp=true;
   inputGlobalFlag=1;
   if(prev=='\n')//\n <
   {
@@ -271,6 +274,7 @@ if(flgFirst!=0)
 {
   if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
   {
+    lastSentOp=false;
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')//if current is not a special character and previous is not a special character
     {
       tempArray[reallocCheck++]=c;
@@ -431,7 +435,7 @@ if(flgFirst!=0)
   }
   else//if current is a special character
   {
-
+    lastSentOp=true;
     //if current is a special character and previous is not
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
@@ -554,11 +558,13 @@ else
   }
   if(c=='\n')
   {
+    lastSentOp=true;
     c=';';
     return c;
   }
   else if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
   {
+    lastSentOp=false;
     if(reallocCheck==reallocSize)
     {
      reallocate();
