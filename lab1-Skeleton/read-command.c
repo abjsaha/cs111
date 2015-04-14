@@ -128,7 +128,8 @@ make_command_stream (int (*get_next_byte) (void *),
   //test: printf("\n Next byte is %c",c);
   if(c==EOF)
   {
-
+    if(prev=='`'||prev=='>'||prev=='<'||prev==';')
+      error (1, 0, "not implemented");
     if(globalFlg)
     {
       if(twoConsNewLines)
