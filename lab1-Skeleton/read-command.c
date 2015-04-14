@@ -754,7 +754,7 @@ void popAndCombine(){
   operNode=(OpStackNode)checked_malloc(sizeof(struct opstack));
   operNode->data=(operator*)checked_malloc(sizeof(struct op));
   operNode->next=(OpStackNode)checked_malloc(sizeof(struct opstack));
-  operNode=popOp(OpStackHead);
+  operNode=popOp(opStackHead);
 
 
 //define command
