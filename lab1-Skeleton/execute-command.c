@@ -4,7 +4,7 @@
 #include "command-internals.h"
 #include <sys/wait.h> 	//for forking
 #include <unistd.h> 	//for dup
-#include <fcnt1.h> 		//for open()
+#include <fcntl.h> 		//for open()
 #include <error.h>
 
 void execute_this(command_t com);
@@ -116,7 +116,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 	}
 	else if (com->type == PIPE_COMMAND)
 	{
-		
+
 	}
 	else if (com->type == SUBSHELL_COMMAND)
 	{
