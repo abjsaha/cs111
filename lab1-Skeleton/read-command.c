@@ -241,6 +241,18 @@ int inputGlobalFlag2=0;
 int outputGlobalFlag2=0;
 char handleCharacter(char c, char prev, int flgFirst)
 {
+  if(c=='(')
+  {
+    if(reallocBracketCheck==reallocBracketSize)
+    {
+      reallocBracket();
+    }
+    bracketCheck[reallocBracketCheck++]=true;
+  }
+  if(c==')')
+  {
+    bracketCheck[--reallocBracketCheck]=false;
+  }
   if(c=='|'&&prev=='|'&&lastOr)
   {
     error (1, 0, "|||");
@@ -479,18 +491,7 @@ if(flgFirst!=0)
   else//if current is a special character
   {
     //if current is a special character and previous is not
-    if(c=='(')
-    {
-      if(reallocBracketCheck==reallocBracketSize)
-      {
-        reallocBracket();
-      }
-      bracketCheck[reallocBracketCheck++]=true;
-    }
-    if(c==')')
-    {
-      bracketCheck[--reallocBracketCheck]=false;
-    }
+    
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
       if(c=='\n') //a \n
@@ -623,19 +624,8 @@ if(flgFirst!=0)
         }
         else//| ;
         {
-          if(c=='(')
-          {
-            if(reallocBracketCheck==reallocBracketSize)
-            {
-              reallocBracket();
-            }
-            bracketCheck[reallocBracketCheck++]=true;
-          }
-          else
-          {
-            error (1, 0, "| ; ");
-            exit(0);
-          }
+          error (1, 0, "| ; ");
+          exit(0);
         }
       }
     }
@@ -643,14 +633,6 @@ if(flgFirst!=0)
 }
 else
 {
-  if(c=='(')
-  {
-    if(reallocBracketCheck==reallocBracketSize)
-    {
-      reallocBracket();
-    }
-    bracketCheck[reallocBracketCheck++]=true;
-  }
   if(c==')')
   {
     error (1, 0, "two consecutive special characters not implemented");
