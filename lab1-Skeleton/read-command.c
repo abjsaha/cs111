@@ -556,19 +556,19 @@ if(flgFirst!=0)
             {
               error (1, 0, "a \n \n |");
               exit(0);
-             if(reallocCheck==reallocSize)
-             {
+              if(reallocCheck==reallocSize)
+              {
                reallocate();
              }
              if(c!=')')
               lastSentOp=true;
-             else
+            else
               lastSentOp=false;
-             globalFlg=0;
-             tempArray[reallocCheck++]=c;
+            globalFlg=0;
+            tempArray[reallocCheck++]=c;
               //realloc
-             return c;
-           }
+            return c;
+          }
             else//| \n \n ;
             {
               error (1, 0, "| \n \n ; not implemented");
@@ -620,6 +620,17 @@ else
     c=';';
     return c;
   }
+  else if(c=='(')
+  {
+    lastSentOp=true;
+    if(reallocCheck==reallocSize)
+    {
+     reallocate();
+   }
+
+   tempArray[reallocCheck++]=c;
+   return c;
+ }
   else if(c!=';'&&c!='|'&&c!='&'&&c!='('&&c!=')'&&c!='<'&&c!='>'&&c!='\n')//if current is not a special character
   {
     lastSentOp=false;
