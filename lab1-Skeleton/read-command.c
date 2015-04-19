@@ -629,6 +629,19 @@ if(flgFirst!=0)
 }
 else
 {
+  if(c=='(')
+  {
+    if(reallocBracketCheck==reallocBracketSize)
+    {
+      reallocBracket();
+    }
+    bracketCheck[reallocBracketCheck++]=true;
+  }
+  if(c==')')
+  {
+    error (1, 0, "two consecutive special characters not implemented");
+    exit(0);
+  }
   if(c==' ')
   {
     return c;
