@@ -489,7 +489,7 @@ if(flgFirst!=0)
     }
     if(c==')')
     {
-      bracketCheck[reallocBracketCheck--]=false;
+      bracketCheck[--reallocBracketCheck]=false;
     }
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
