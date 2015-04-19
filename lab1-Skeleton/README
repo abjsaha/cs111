@@ -75,7 +75,7 @@ if (p == 0) {
 else {
 	int status;
 	waitpid(p, &status, 0)    //#include <sys/wait.h>
-	if (exitstatus = 1) {	  //first part not successful, so we execute next part
+	if (exitstatus == 1) {	  //first part not successful, so we execute next part
 		char *command[] = {"echo", "b", 0};
 		execvp(command[0],command);
 }

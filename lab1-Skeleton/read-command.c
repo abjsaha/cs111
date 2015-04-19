@@ -772,7 +772,7 @@ else if (strcmp(tmp,")")==0){
   }
     //create subshell command and push it to command stack
   curCom->type = SUBSHELL_COMMAND;
-    curCom->u.subshell_command = comStackHead->data; //pop here before setting subshell_cmd?
+    curCom->u.subshell_command = popCom(); //comStackHead->data; //pop here before setting subshell_cmd?
     comNode->data = curCom;
     comNode->next = NULL;
     pushCom(comNode);
