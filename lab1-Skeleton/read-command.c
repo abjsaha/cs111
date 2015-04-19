@@ -10,7 +10,6 @@
 #define PRECEDENCE_AND_OR 2
 #define PRECEDENCE_PIPE 3
 #define INITIAL_SIZE 1024
-
 typedef struct commandNode *command_node_t;
 typedef struct opstack *OpStackNode;
 typedef struct comstack *comStackNode;
@@ -109,6 +108,7 @@ int twoConsNewLines=0;
 bool lastSentOp=false;
 bool lastOr=false;
 bool lastAnd=false;
+bool* bracketCheck;
 command_stream_t
 make_command_stream (int (*get_next_byte) (void *),
  void *get_next_byte_argument)
@@ -119,6 +119,8 @@ make_command_stream (int (*get_next_byte) (void *),
  comStackHead=(comStackNode)checked_malloc(sizeof(struct comstack));
  opStackHead=(OpStackNode)checked_malloc(sizeof(struct opstack));
  comStreamT=(command_stream_t)checked_malloc(sizeof(struct command_stream));
+ bracketCheck=(bool*)checked_malloc(sizeof(bool)*INITIAL_SIZE);
+ bracketCheck[0]=false;
  opStackHead->next=NULL;
  comStackHead->next=NULL;
  comStreamT->head=NULL;
@@ -133,6 +135,8 @@ make_command_stream (int (*get_next_byte) (void *),
   {
     if(lastSentOp)
       error (2, 0, "not implemented");
+    if(bracketCheck[0])
+      error(3,0,"no closing bracket for starting bracket");
     if(globalFlg)
     {
       if(twoConsNewLines)
@@ -227,7 +231,10 @@ read_command_stream (command_stream_t s)
 
 bool comment=false;
 int reallocSize=1024;
+int reallocBracketSize=1024;
 int reallocCheck=0;
+int reallocBracketCheck=0;
+int indexBracket=0;
 int outputGlobalFlag=0;
 int inputGlobalFlag=0;
 int inputGlobalFlag2=0;
@@ -472,6 +479,19 @@ if(flgFirst!=0)
   else//if current is a special character
   {
     //if current is a special character and previous is not
+    if(c=='(')
+    {
+      if(reallocBracketCheck==reallocBracketSize)
+      {
+        reallocBracket();
+      }
+      reallocBracketCheck=0;
+      bracketCheck[indexBracket++]=true;
+    }
+    if(c==')')
+    {
+      bracketCheck[indexBracket--]=false;
+    }
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
       if(c=='\n') //a \n
@@ -656,7 +676,11 @@ void reallocate()
   reallocSize*=2;
   tempArray=(char*)checked_realloc(tempArray,reallocSize);
 }
-
+void reallocBracket()
+{
+  reallocBracketSize*=2;
+  bracketCheck=(bool*)checked_realloc(bracketCheck,reallocBracketSize);
+}
 
 
 void growTree(char* tmp, bool newTreeFlg, bool inputFlg, bool outputFlg)
