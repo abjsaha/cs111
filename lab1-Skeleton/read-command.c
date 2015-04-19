@@ -485,12 +485,11 @@ if(flgFirst!=0)
       {
         reallocBracket();
       }
-      reallocBracketCheck=0;
-      bracketCheck[indexBracket++]=true;
+      bracketCheck[reallocBracketCheck++]=true;
     }
     if(c==')')
     {
-      bracketCheck[indexBracket--]=false;
+      bracketCheck[reallocBracketCheck--]=false;
     }
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
