@@ -620,8 +620,19 @@ if(flgFirst!=0)
         }
         else//| ;
         {
-          error (1, 0, "| ; ");
-          exit(0);
+          if(c=='(')
+          {
+            if(reallocBracketCheck==reallocBracketSize)
+            {
+              reallocBracket();
+            }
+            bracketCheck[reallocBracketCheck++]=true;
+          }
+          else
+          {
+            error (1, 0, "| ; ");
+            exit(0);
+          }
         }
       }
     }
