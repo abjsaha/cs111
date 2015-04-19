@@ -7,7 +7,7 @@
 #include <fcnt1.h> 		//for open()
 #include <error.h>
 
-command_t execute_this(command_t com);
+void execute_this(command_t com);
 
 int
 command_status (command_t c)
@@ -21,24 +21,105 @@ execute_command (command_t c, bool time_travel)
 {
 //execute_command takes in a command returned by read_command_stream
 //command_t c is the root of a command tree
-
-	//parse/iterate through command tree LCR
-	//send the command to be executed next to execute_this
-	execute_this(...);
+	execute_this(c);
 
 
   //error (1, 0, "command execution not yet implemented");
 }
 
-command_t execute_this(command_t com)
+void execute_this(command_t com)//TODO: deal with not returning to main process
 {
 	//given pointer to a command
 	//execute that command
 
-	if (com->type == SIMPE_COMMAND)
-	if (com->type == SEQUENCE_COMMAND)
-	if (com->type == OR_COMMAND)
-	if (com->type == AND_COMMAND)
-	if (com->type == PIPE_COMMAND)
-	if (com->type == SUBSHELL_COMMAND)
+	if (com->type == SIMPLE_COMMAND)
+	{
+		//execute
+		execvp(com->u.word[0],com->u.word);
+	}
+	else if (com->type == SEQUENCE_COMMAND)
+	{
+		//execute
+		int p=fork();
+		if(p==0)
+		{
+			if(com->u.command[0]->type==SIMPLE_COMMAND)
+				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+			else
+				execute_this(com->u.command[0]);
+		}
+		else
+		{
+			if(com->u.command[1]->type==SIMPLE_COMMAND)
+				execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+			else
+				execute_this(com->u.command[1]);
+		}
+	}
+	else if (com->type == OR_COMMAND)//deal with if information is successful
+	{
+		//execute
+		int p=fork();
+		if(p==0)
+		{
+			if(com->u.command[0]->type==SIMPLE_COMMAND)
+				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+			else
+				execute_this(com->u.command[0]);
+		}
+		else
+		{
+			int status;
+			waitpid(p,&status,0);
+			int exitStatus=WEXITSTATUS(status);
+			if(exitStatus==1)
+			{
+				if(com->u.command[1]->type==SIMPLE_COMMAND)
+				{
+					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+				}
+				else
+				{
+					execute_this(com->u.command[1]);
+				}
+			}
+		}
+	}
+	else if (com->type == AND_COMMAND)//deal with if information is not successful
+	{
+		//execute
+		int p=fork();
+		if(p==0)
+		{
+			if(com->u.command[0]->type==SIMPLE_COMMAND)
+				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+			else
+				execute_this(com->u.command[0]);
+		}
+		else
+		{
+			int status;
+			waitpid(p,&status,0);
+			int exitStatus=WEXITSTATUS(status);
+			if(exitStatus==0)
+			{
+				if(com->u.command[1]->type==SIMPLE_COMMAND)
+				{
+					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+				}
+				else
+				{
+					execute_this(com->u.command[1]);
+				}
+			}
+		}
+	}
+	else if (com->type == PIPE_COMMAND)
+	{
+		
+	}
+	else if (com->type == SUBSHELL_COMMAND)
+	{
+		execute_this(com->u.subshell_command);
+	}
 }
