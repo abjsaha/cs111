@@ -582,7 +582,10 @@ if(flgFirst!=0)
              if(c!=')')
               lastSentOp=true;
             else
+            {
               lastSentOp=false;
+              bracketCheck[--reallocBracketCheck]=false;
+            }
             globalFlg=0;
             tempArray[reallocCheck++]=c;
               //realloc
