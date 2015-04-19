@@ -491,7 +491,7 @@ if(flgFirst!=0)
   else//if current is a special character
   {
     //if current is a special character and previous is not
-    
+
     if(prev!=';'&&prev!='|'&&prev!='&'&&prev!='('&&prev!=')'&&prev!='<'&&prev!='>'&&prev!='\n')
     {
       if(c=='\n') //a \n
@@ -576,10 +576,10 @@ if(flgFirst!=0)
             {
               error (1, 0, "a \n \n |");
               exit(0);
-              if(reallocCheck==reallocSize)
+              /*if(reallocCheck==reallocSize)
               {
                reallocate();
-             }
+              }
              if(c!=')')
               lastSentOp=true;
             else
@@ -590,7 +590,7 @@ if(flgFirst!=0)
             globalFlg=0;
             tempArray[reallocCheck++]=c;
               //realloc
-            return c;
+            return c;*/
           }
             else//| \n \n ;
             {
@@ -604,7 +604,7 @@ if(flgFirst!=0)
             {
               error (1, 0, "a \n |");
               exit(0);
-              lastSentOp=true;
+              /*lastSentOp=true;
               memset(tempArray,0,strlen(tempArray));
               reallocCheck=0;
               //reallocSize=512;
@@ -613,7 +613,7 @@ if(flgFirst!=0)
               tempArray[reallocCheck++]=c;
               globalFlg=0;
               //realloc
-              return c;
+              return c;*/
             }
             else//| \n ;
             {
@@ -624,8 +624,28 @@ if(flgFirst!=0)
         }
         else//| ;
         {
-          error (1, 0, "| ; ");
-          exit(0);
+          if(c=='(')
+          {
+            lastSentOp=true;
+            if(strcmp(tempArray," ")!=0)
+            {
+              while(tempArray[0]==' ')
+                tempArray++;
+              while(tempArray[strlen(tempArray)-1]==' ')
+                tempArray[strlen(tempArray)-1]='\0';
+              growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
+            }
+            memset(tempArray,0,strlen(tempArray));
+            reallocCheck=0;
+            tempArray=(char*)checked_malloc(sizeof(char)*INITIAL_SIZE);
+            tempArray[reallocCheck++]=c;
+            return c;
+          }
+          else
+          {
+            error (1, 0, "| ; ");
+            exit(0);
+          }
         }
       }
     }
