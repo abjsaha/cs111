@@ -490,7 +490,10 @@ if(flgFirst!=0)
             tempArray[strlen(tempArray)-1]='\0';
           growTree(tempArray, 0,inputGlobalFlag,outputGlobalFlag);
         }
-        lastSentOp=true;
+        if(c!=')')
+          lastSentOp=true;
+        else
+          lastSentOp=false;
         memset(tempArray,0,strlen(tempArray));
         reallocCheck=0;
         //reallocSize=512;
@@ -557,7 +560,10 @@ if(flgFirst!=0)
              {
                reallocate();
              }
-             lastSentOp=true;
+             if(c!=')')
+              lastSentOp=true;
+             else
+              lastSentOp=false;
              globalFlg=0;
              tempArray[reallocCheck++]=c;
               //realloc
