@@ -34,10 +34,11 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 
 	if (com->type == SIMPLE_COMMAND)
 	{
+		printf("com->input is %s\n", com->input);
+		printf("com->output is %s\n", com->output);
 		//input
 		if (com->input)
 		{
-			printf("com->input is %s\n", com->input);
 			int fd1 = open(com->input, O_RDONLY);
 			if (fd1 < 0)
 				error(1, 0, "could not open input file");
@@ -50,7 +51,6 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		//output
 		if (com->output)
 		{
-			printf("com->output is %s\n", com->output);
 			int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 			if (fd1 < 0)
 				error(1, 0, "could not open output file");
