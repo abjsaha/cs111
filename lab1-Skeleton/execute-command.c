@@ -48,8 +48,8 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		//input
 		if (com->input)
 		{
-			printf("com->input is %s\n", com->output);
-			int fd1 = open(com->input, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			printf("com->input is %s\n", com->input);
+			int fd1 = open(com->input, O_RDONLY);
 			if (fd1 < 0)
 				error(1, 0, "could not open input file");
 			int fd2 = 0;
