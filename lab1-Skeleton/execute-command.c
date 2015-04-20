@@ -3,7 +3,7 @@
 #include "command.h"
 #include "command-internals.h"
 #include <sys/wait.h> 	//for forking
-#include <unistd.h> 	//for dup
+#include <unistd.h> 	//for dup/dup2
 #include <fcntl.h> 		//for open()
 #include <error.h>
 
@@ -34,8 +34,29 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 
 	if (com->type == SIMPLE_COMMAND)
 	{
-		//execute
-		execvp(com->u.word[0],com->u.word);
+		//output
+		if (com->output)
+		{
+			int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			if (fd1 < 0)
+				error(1, 0, "could not open output file");
+			int fd2 = 1;
+			dup2(fd1, fd2);
+			execvp(com->u.word[0],com->u.word);
+		}
+		//input
+		if (com->input)
+		{
+			int fd1 = open(com->input, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+			if (fd1 < 0)
+				error(1, 0, "could not open output file");
+			int fd2 = 0;
+			dup2(fd1, fd2);
+			execvp(com->u.word[0],com->u.word);
+		}
+		//no output or input
+		if (!com->output && !com->input )
+			execvp(com->u.word[0],com->u.word);
 	}
 	else if (com->type == SEQUENCE_COMMAND)
 	{
