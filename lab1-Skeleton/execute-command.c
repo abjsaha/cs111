@@ -37,6 +37,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		//output
 		if (com->output)
 		{
+			printf("com->output is %s\n", com->output);
 			int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 			if (fd1 < 0)
 				error(1, 0, "could not open output file");
@@ -47,11 +48,14 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		//input
 		if (com->input)
 		{
+			printf("com->input is %s\n", com->output);
 			int fd1 = open(com->input, O_CREAT | O_TRUNC | O_WRONLY, 0644);
 			if (fd1 < 0)
-				error(1, 0, "could not open output file");
+				error(1, 0, "could not open input file");
 			int fd2 = 0;
-			dup2(fd1, fd2);
+			int fd_dup = dup2(fd1, fd2);
+			if (fd_dup != 0)
+				error(1, 0, "failed to redirect command input");
 			execvp(com->u.word[0],com->u.word);
 		}
 		//no output or input
