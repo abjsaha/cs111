@@ -45,7 +45,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int fd_dup = dup2(fd1, fd2);
 			if (fd_dup != 0)
 				error(1, 0, "failed to redirect command input");
-			execvp(com->u.word[0],com->u.word);
+			//execvp(com->u.word[0],com->u.word);
 		}
 		//output
 		if (com->output)
@@ -56,11 +56,12 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				error(1, 0, "could not open output file");
 			int fd2 = 1;
 			dup2(fd1, fd2);
-			execvp(com->u.word[0],com->u.word);
+			//execvp(com->u.word[0],com->u.word);
 		}
 		//no output or input
 		if (!com->output && !com->input )
-			execvp(com->u.word[0],com->u.word);
+			printf("no input or output");
+		execvp(com->u.word[0],com->u.word);
 	}
 	else if (com->type == SEQUENCE_COMMAND)
 	{
