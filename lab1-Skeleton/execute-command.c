@@ -90,9 +90,8 @@ void execute_this(command_t com)
 				int status;
 				waitpid(p,&status,0);
 				int exitStatus=WEXITSTATUS(status);
-				if(exitStatus||!exitStatus)
-					execute_this(com->u.command[1]);
-				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+				execute_this(com->u.command[1]);
+				if(exitStatus==0&&com->u.command[1]->status==0)
 					com->status=0;
 				else
 					com->status=1;
@@ -117,7 +116,7 @@ void execute_this(command_t com)
 				{
 					execute_this(com->u.command[1]);
 				}
-				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+				if(exitStatus==0||com->u.command[1]->status==0)
 					com->status=0;
 				else
 					com->status=1;
@@ -141,7 +140,7 @@ void execute_this(command_t com)
 				{
 					execute_this(com->u.command[1]);
 				}
-				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+				if(exitStatus==0&&com->u.command[1]->status==0)
 					com->status=0;
 				else
 					com->status=1;
