@@ -36,8 +36,8 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 	{
 		case(SIMPLE_COMMAND):
 		{
-			printf("com->input is %s\n", com->input);
-			printf("com->output is %s\n", com->output);
+			//printf("com->input is %s\n", com->input);
+			//printf("com->output is %s\n", com->output);
 			int p=fork();
 			if(p==0)
 			{
@@ -83,11 +83,11 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[1]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
-				execute_this(com->u.command[0]);
+				execute_this(com->u.command[1]);
 			}
 			break;
 		}
@@ -97,7 +97,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[1]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
@@ -107,7 +107,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				com->u.command[1]->status=exitStatus;
 				if(exitStatus==1)
 				{
-					execute_this(com->u.command[0]);
+					execute_this(com->u.command[1]);
 				}
 			}
 			break;
@@ -118,7 +118,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[1]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
@@ -127,15 +127,15 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				int exitStatus=WEXITSTATUS(status);
 				if(exitStatus==0)
 				{
-					execute_this(com->u.command[0]);
+					execute_this(com->u.command[1]);
 				}
 			}
 			break;
 		}
 		case (PIPE_COMMAND):
 		{
-			printf("com->input is %s\n", com->input);
-			printf("com->output is %s\n", com->output);
+			//printf("com->input is %s\n", com->input);
+			//printf("com->output is %s\n", com->output);
 			int fd[2];
 			if(pipe(fd)==-1)
 			{
