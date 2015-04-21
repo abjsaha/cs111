@@ -83,11 +83,11 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[0]);
+				execute_this(com->u.command[1]);
 			}
 			else
 			{
-				execute_this(com->u.command[1]);
+				execute_this(com->u.command[0]);
 			}
 			break;
 		}
@@ -97,7 +97,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[0]);
+				execute_this(com->u.command[1]);
 			}
 			else
 			{
@@ -107,7 +107,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				com->u.command[1]->status=exitStatus;
 				if(exitStatus==1)
 				{
-					execute_this(com->u.command[1]);
+					execute_this(com->u.command[0]);
 				}
 			}
 			break;
@@ -118,7 +118,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[0]);
+				execute_this(com->u.command[1]);
 			}
 			else
 			{
@@ -127,7 +127,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				int exitStatus=WEXITSTATUS(status);
 				if(exitStatus==0)
 				{
-					execute_this(com->u.command[1]);
+					execute_this(com->u.command[0]);
 				}
 			}
 			break;
@@ -161,7 +161,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					//execute command on left
 					close(fd[0]);
 					dup2(fd[1],1);
-					execute_this(com->u.command[1]);
+					execute_this(com->u.command[0]);
 				}
 				else
 				{
