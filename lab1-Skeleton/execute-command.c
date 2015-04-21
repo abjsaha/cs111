@@ -27,7 +27,7 @@ execute_command (command_t c, bool time_travel)
   //error (1, 0, "command execution not yet implemented");
 }
 
-void execute_this(command_t com)//TODO: deal with not returning to main process
+void execute_this(command_t com)
 {
 	//given pointer to a command
 	//execute that command
@@ -93,6 +93,10 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				if(exitStatus||!exitStatus)
 					execute_this(com->u.command[1]);
 			}
+			if(com->u.command[0]->status==0&&com->u.command[1]->status)
+				com->status=0;
+			else
+				com->status=1;
 			break;
 		}
 		case (OR_COMMAND)://deal with if information is successful
@@ -114,6 +118,10 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					execute_this(com->u.command[1]);
 				}
 			}
+			if(com->u.command[0]->status==0&&com->u.command[1]->status)
+				com->status=0;
+			else
+				com->status=1;
 			break;
 		}
 		case (AND_COMMAND)://deal with if information is not successful
@@ -134,6 +142,10 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					execute_this(com->u.command[1]);
 				}
 			}
+			if(com->u.command[0]->status==0&&com->u.command[1]->status)
+				com->status=0;
+			else
+				com->status=1;
 			break;
 		}
 		case (PIPE_COMMAND):
@@ -181,6 +193,8 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					{
 						waitpid(secondPid,&status,0);
 					}
+					int exit=WEXITSTATUS(status);
+					com->status=exit;
 				}
 			}
 			break;
@@ -188,6 +202,10 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		case (SUBSHELL_COMMAND):
 		{
 			execute_this(com->u.subshell_command);
+			if(com->u.subshell_command->status==0)
+				com->status=0;
+			else
+				com->status=1;
 			break;
 		}
 	}	
