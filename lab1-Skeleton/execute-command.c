@@ -92,11 +92,11 @@ void execute_this(command_t com)
 				int exitStatus=WEXITSTATUS(status);
 				if(exitStatus||!exitStatus)
 					execute_this(com->u.command[1]);
+				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+					com->status=0;
+				else
+					com->status=1;
 			}
-			/*if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
-				com->status=0;
-			else
-				com->status=1;*/
 			break;
 		}
 		case (OR_COMMAND)://deal with if information is successful
@@ -117,11 +117,11 @@ void execute_this(command_t com)
 				{
 					execute_this(com->u.command[1]);
 				}
+				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+					com->status=0;
+				else
+					com->status=1;
 			}
-			/*if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
-				com->status=0;
-			else
-				com->status=1;*/
 			break;
 		}
 		case (AND_COMMAND)://deal with if information is not successful
@@ -141,11 +141,11 @@ void execute_this(command_t com)
 				{
 					execute_this(com->u.command[1]);
 				}
+				if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
+					com->status=0;
+				else
+					com->status=1;
 			}
-			/*if(com->u.command[0]->status==0&&com->u.command[1]->status==0)
-				com->status=0;
-			else
-				com->status=1;*/
 			break;
 		}
 		case (PIPE_COMMAND):
