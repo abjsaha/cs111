@@ -145,8 +145,13 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		printf("com->input is %s\n", com->input);
 		printf("com->output is %s\n", com->output);
 		int fd[2];
-		pipe(fd);
+		if(pipe(fd)==-1)
+		{
+			error(1, 0, "error in creating pipe");
+		}
 		int firstPid=fork();
+		if(firstPid==-1)
+			error(1, 0, "error in creating fork");
 		if(firstPid==0)
 		{
 			//execute command on right
@@ -164,6 +169,8 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		else
 		{
 			int secondPid=fork();
+			if(secondPid==-1)
+				error(1, 0, "error in creating fork");
 			if(secondPid==0)
 			{
 				//execute command on left
