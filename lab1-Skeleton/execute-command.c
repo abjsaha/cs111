@@ -38,32 +38,43 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 		{
 			printf("com->input is %s\n", com->input);
 			printf("com->output is %s\n", com->output);
-			//input
-			if (com->input)
+			int p=fork();
+			if(p==0)
 			{
-				int fd1 = open(com->input, O_RDONLY);
-				if (fd1 < 0)
-					error(1, 0, "could not open input file");
-				int fd2 = 0;
-				int fd_dup = dup2(fd1, fd2);
-				if (fd_dup != 0)
-					error(1, 0, "failed to redirect command input");
-				//execvp(com->u.word[0],com->u.word);
+				//input
+				if (com->input)
+				{
+					int fd1 = open(com->input, O_RDONLY);
+					if (fd1 < 0)
+						error(1, 0, "could not open input file");
+					int fd2 = 0;
+					int fd_dup = dup2(fd1, fd2);
+					if (fd_dup != 0)
+						error(1, 0, "failed to redirect command input");
+					//execvp(com->u.word[0],com->u.word);
+				}
+				//output
+				if (com->output)
+				{
+					int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+					if (fd1 < 0)
+						error(1, 0, "could not open output file");
+					int fd2 = 1;
+					dup2(fd1, fd2);
+					//execvp(com->u.word[0],com->u.word);
+				}
+				//no output or input
+				if (!com->output && !com->input )
+					printf("no input or output");
+				execvp(com->u.word[0],com->u.word);
 			}
-			//output
-			if (com->output)
+			else
 			{
-				int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-				if (fd1 < 0)
-					error(1, 0, "could not open output file");
-				int fd2 = 1;
-				dup2(fd1, fd2);
-				//execvp(com->u.word[0],com->u.word);
+				int status;
+				waitpid(p,&status,0);
+				int exitStatus=WEXITSTATUS(status);
+				com->status=exitStatus;
 			}
-			//no output or input
-			if (!com->output && !com->input )
-				printf("no input or output");
-			execvp(com->u.word[0],com->u.word);
 			break;
 		}
 		case (SEQUENCE_COMMAND):
@@ -72,17 +83,11 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				if(com->u.command[0]->type==SIMPLE_COMMAND)
-					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
-				else
-					execute_this(com->u.command[0]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
-				if(com->u.command[1]->type==SIMPLE_COMMAND)
-					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-				else
-					execute_this(com->u.command[1]);
+				execute_this(com->u.command[1]);
 			}
 			break;
 		}
@@ -92,26 +97,17 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				if(com->u.command[0]->type==SIMPLE_COMMAND)
-					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
-				else
-					execute_this(com->u.command[0]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
 				int status;
 				waitpid(p,&status,0);
 				int exitStatus=WEXITSTATUS(status);
+				com->u.command[1]->status=exitStatus;
 				if(exitStatus==1)
 				{
-					if(com->u.command[1]->type==SIMPLE_COMMAND)
-					{
-						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-					}
-					else
-					{
-						execute_this(com->u.command[1]);
-					}
+					execute_this(com->u.command[1]);
 				}
 			}
 			break;
@@ -122,10 +118,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				if(com->u.command[0]->type==SIMPLE_COMMAND)
-					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
-				else
-					execute_this(com->u.command[0]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
@@ -134,14 +127,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				int exitStatus=WEXITSTATUS(status);
 				if(exitStatus==0)
 				{
-					if(com->u.command[1]->type==SIMPLE_COMMAND)
-					{
-						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-					}
-					else
-					{
-						execute_this(com->u.command[1]);
-					}
+					execute_this(com->u.command[1]);
 				}
 			}
 			break;
@@ -163,14 +149,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				//execute command on right
 				close(fd[1]);
 				dup2(fd[0],0);
-				if(com->u.command[1]->type==SIMPLE_COMMAND)
-				{
-					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-				}
-				else
-				{
-					execute_this(com->u.command[1]);
-				}
+				execute_this(com->u.command[1]);
 			}
 			else
 			{
@@ -182,14 +161,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					//execute command on left
 					close(fd[0]);
 					dup2(fd[1],1);
-					if(com->u.command[1]->type==SIMPLE_COMMAND)
-					{
-						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-					}
-					else
-					{
-						execute_this(com->u.command[1]);
-					}
+					execute_this(com->u.command[1]);
 				}
 				else
 				{
