@@ -200,3 +200,8 @@ int main(){
 
 choosing which fd to close determines direction of the pipe and which nodes (parent, 
 child1 or child2) the pipe is active between
+
+
+//to do: initialize exit status of each command
+//use switch statement
+//for and commands: example a&&b if a is false dont check b

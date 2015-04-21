@@ -32,178 +32,181 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 	//given pointer to a command
 	//execute that command
 
-	if (com->type == SIMPLE_COMMAND)
+	switch (com->type) 
 	{
-		printf("com->input is %s\n", com->input);
-		printf("com->output is %s\n", com->output);
-		//input
-		if (com->input)
+		case(SIMPLE_COMMAND):
 		{
-			int fd1 = open(com->input, O_RDONLY);
-			if (fd1 < 0)
-				error(1, 0, "could not open input file");
-			int fd2 = 0;
-			int fd_dup = dup2(fd1, fd2);
-			if (fd_dup != 0)
-				error(1, 0, "failed to redirect command input");
-			//execvp(com->u.word[0],com->u.word);
+			printf("com->input is %s\n", com->input);
+			printf("com->output is %s\n", com->output);
+			//input
+			if (com->input)
+			{
+				int fd1 = open(com->input, O_RDONLY);
+				if (fd1 < 0)
+					error(1, 0, "could not open input file");
+				int fd2 = 0;
+				int fd_dup = dup2(fd1, fd2);
+				if (fd_dup != 0)
+					error(1, 0, "failed to redirect command input");
+				//execvp(com->u.word[0],com->u.word);
+			}
+			//output
+			if (com->output)
+			{
+				int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+				if (fd1 < 0)
+					error(1, 0, "could not open output file");
+				int fd2 = 1;
+				dup2(fd1, fd2);
+				//execvp(com->u.word[0],com->u.word);
+			}
+			//no output or input
+			if (!com->output && !com->input )
+				printf("no input or output");
+			execvp(com->u.word[0],com->u.word);
 		}
-		//output
-		if (com->output)
+		case (SEQUENCE_COMMAND):
 		{
-			int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-			if (fd1 < 0)
-				error(1, 0, "could not open output file");
-			int fd2 = 1;
-			dup2(fd1, fd2);
-			//execvp(com->u.word[0],com->u.word);
-		}
-		//no output or input
-		if (!com->output && !com->input )
-			printf("no input or output");
-		execvp(com->u.word[0],com->u.word);
-	}
-	else if (com->type == SEQUENCE_COMMAND)
-	{
-		//execute
-		int p=fork();
-		if(p==0)
-		{
-			if(com->u.command[0]->type==SIMPLE_COMMAND)
-				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+			//execute
+			int p=fork();
+			if(p==0)
+			{
+				if(com->u.command[0]->type==SIMPLE_COMMAND)
+					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+				else
+					execute_this(com->u.command[0]);
+			}
 			else
-				execute_this(com->u.command[0]);
-		}
-		else
-		{
-			if(com->u.command[1]->type==SIMPLE_COMMAND)
-				execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-			else
-				execute_this(com->u.command[1]);
-		}
-	}
-	else if (com->type == OR_COMMAND)//deal with if information is successful
-	{
-		//execute
-		int p=fork();
-		if(p==0)
-		{
-			if(com->u.command[0]->type==SIMPLE_COMMAND)
-				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
-			else
-				execute_this(com->u.command[0]);
-		}
-		else
-		{
-			int status;
-			waitpid(p,&status,0);
-			int exitStatus=WEXITSTATUS(status);
-			if(exitStatus==1)
 			{
 				if(com->u.command[1]->type==SIMPLE_COMMAND)
-				{
 					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-				}
 				else
-				{
 					execute_this(com->u.command[1]);
-				}
 			}
 		}
-	}
-	else if (com->type == AND_COMMAND)//deal with if information is not successful
-	{
-		//execute
-		int p=fork();
-		if(p==0)
+		case (OR_COMMAND)://deal with if information is successful
 		{
-			if(com->u.command[0]->type==SIMPLE_COMMAND)
-				execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
-			else
-				execute_this(com->u.command[0]);
-		}
-		else
-		{
-			int status;
-			waitpid(p,&status,0);
-			int exitStatus=WEXITSTATUS(status);
-			if(exitStatus==0)
+			//execute
+			int p=fork();
+			if(p==0)
 			{
-				if(com->u.command[1]->type==SIMPLE_COMMAND)
-				{
-					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-				}
+				if(com->u.command[0]->type==SIMPLE_COMMAND)
+					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
 				else
-				{
-					execute_this(com->u.command[1]);
-				}
-			}
-		}
-	}
-	else if (com->type == PIPE_COMMAND)
-	{
-		printf("com->input is %s\n", com->input);
-		printf("com->output is %s\n", com->output);
-		int fd[2];
-		if(pipe(fd)==-1)
-		{
-			error(1, 0, "error in creating pipe");
-		}
-		int firstPid=fork();
-		if(firstPid==-1)
-			error(1, 0, "error in creating fork");
-		if(firstPid==0)
-		{
-			//execute command on right
-			close(fd[1]);
-			dup2(fd[0],0);
-			if(com->u.command[1]->type==SIMPLE_COMMAND)
-			{
-				execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+					execute_this(com->u.command[0]);
 			}
 			else
 			{
-				execute_this(com->u.command[1]);
-			}
-		}
-		else
-		{
-			int secondPid=fork();
-			if(secondPid==-1)
-				error(1, 0, "error in creating fork");
-			if(secondPid==0)
-			{
-				//execute command on left
-				close(fd[0]);
-				dup2(fd[1],1);
-				if(com->u.command[1]->type==SIMPLE_COMMAND)
-				{
-					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
-				}
-				else
-				{
-					execute_this(com->u.command[1]);
-				}
-			}
-			else
-			{
-				close(fd[0]);
-				close(fd[1]);
 				int status;
-				int returnedPid=waitpid(-1,&status,0);
-				if(returnedPid==secondPid)
+				waitpid(p,&status,0);
+				int exitStatus=WEXITSTATUS(status);
+				if(exitStatus==1)
 				{
-					waitpid(firstPid,&status,0);
-				}
-				if(returnedPid==firstPid)
-				{
-					waitpid(secondPid,&status,0);
+					if(com->u.command[1]->type==SIMPLE_COMMAND)
+					{
+						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+					}
+					else
+					{
+						execute_this(com->u.command[1]);
+					}
 				}
 			}
 		}
-	}
-	else if (com->type == SUBSHELL_COMMAND)
-	{
-		execute_this(com->u.subshell_command);
-	}
+		case (AND_COMMAND)://deal with if information is not successful
+		{
+			//execute
+			int p=fork();
+			if(p==0)
+			{
+				if(com->u.command[0]->type==SIMPLE_COMMAND)
+					execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
+				else
+					execute_this(com->u.command[0]);
+			}
+			else
+			{
+				int status;
+				waitpid(p,&status,0);
+				int exitStatus=WEXITSTATUS(status);
+				if(exitStatus==0)
+				{
+					if(com->u.command[1]->type==SIMPLE_COMMAND)
+					{
+						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+					}
+					else
+					{
+						execute_this(com->u.command[1]);
+					}
+				}
+			}
+		}
+		case (PIPE_COMMAND):
+		{
+			printf("com->input is %s\n", com->input);
+			printf("com->output is %s\n", com->output);
+			int fd[2];
+			if(pipe(fd)==-1)
+			{
+				error(1, 0, "error in creating pipe");
+			}
+			int firstPid=fork();
+			if(firstPid==-1)
+				error(1, 0, "error in creating fork");
+			if(firstPid==0)
+			{
+				//execute command on right
+				close(fd[1]);
+				dup2(fd[0],0);
+				if(com->u.command[1]->type==SIMPLE_COMMAND)
+				{
+					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+				}
+				else
+				{
+					execute_this(com->u.command[1]);
+				}
+			}
+			else
+			{
+				int secondPid=fork();
+				if(secondPid==-1)
+					error(1, 0, "error in creating fork");
+				if(secondPid==0)
+				{
+					//execute command on left
+					close(fd[0]);
+					dup2(fd[1],1);
+					if(com->u.command[1]->type==SIMPLE_COMMAND)
+					{
+						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+					}
+					else
+					{
+						execute_this(com->u.command[1]);
+					}
+				}
+				else
+				{
+					close(fd[0]);
+					close(fd[1]);
+					int status;
+					int returnedPid=waitpid(-1,&status,0);
+					if(returnedPid==secondPid)
+					{
+						waitpid(firstPid,&status,0);
+					}
+					if(returnedPid==firstPid)
+					{
+						waitpid(secondPid,&status,0);
+					}
+				}
+			}
+		}
+		case (SUBSHELL_COMMAND):
+		{
+			execute_this(com->u.subshell_command);
+		}
+	}	
 }
