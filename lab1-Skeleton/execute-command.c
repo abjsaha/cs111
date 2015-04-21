@@ -182,13 +182,13 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					//execute command on left
 					close(fd[0]);
 					dup2(fd[1],1);
-					if(com->u.command[1]->type==SIMPLE_COMMAND)
+					if(com->u.command[0]->type==SIMPLE_COMMAND)
 					{
-						execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+						execvp(com->u.command[0]->u.word[0],com->u.command[0]->u.word);
 					}
 					else
 					{
-						execute_this(com->u.command[1]);
+						execute_this(com->u.command[0]);
 					}
 				}
 				else
