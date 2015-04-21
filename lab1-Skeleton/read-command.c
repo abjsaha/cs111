@@ -769,9 +769,9 @@ else if (strcmp(tmp,")")==0){
     popAndCombine();
     if (!opStackHead->data)
       error (1, 0, "no matching parenthesis");
-    else
-      popOp();
   }
+  if (strcmp(opStackHead->data->data,")")==0)
+      popOp();
     //create subshell command and push it to command stack
   curCom->type = SUBSHELL_COMMAND;
     curCom->u.subshell_command = popCom()->data;
