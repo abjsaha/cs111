@@ -142,7 +142,58 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 	}
 	else if (com->type == PIPE_COMMAND)
 	{
-
+		printf("com->input is %s\n", com->input);
+		printf("com->output is %s\n", com->output);
+		int fd[2];
+		pipe(fd);
+		int firstPid=fork();
+		if(firstPid==0)
+		{
+			//execute command on right
+			close(fd[1]);
+			dup2(fd[0],0);
+			if(com->u.command[1]->type==SIMPLE_COMMAND)
+			{
+				execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+			}
+			else
+			{
+				execute_this(com->u.command[1]);
+			}
+		}
+		else
+		{
+			int secondPid=fork();
+			if(secondPid==0)
+			{
+				//execute command on left
+				close(fd[0]);
+				dup2(fd[1],1);
+				if(com->u.command[1]->type==SIMPLE_COMMAND)
+				{
+					execvp(com->u.command[1]->u.word[0],com->u.command[1]->u.word);
+				}
+				else
+				{
+					execute_this(com->u.command[1]);
+				}
+			}
+			else
+			{
+				close(fd[0]);
+				close(fd[1]);
+				int status;
+				int returnedPid=waitpid(-1,&status,0);
+				if(returnedPid==secondPid)
+				{
+					waitpid(firstPid,&status,0);
+				}
+				if(returnedPid==firstPid)
+				{
+					waitpid(secondPid,&status,0);
+				}
+			}
+		}
 	}
 	else if (com->type == SUBSHELL_COMMAND)
 	{
