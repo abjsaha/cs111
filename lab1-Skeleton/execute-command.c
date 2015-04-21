@@ -83,11 +83,15 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			int p=fork();
 			if(p==0)
 			{
-				execute_this(com->u.command[1]);
+				execute_this(com->u.command[0]);
 			}
 			else
 			{
-				execute_this(com->u.command[0]);
+				int status;
+				waitpid(p,&status,0);
+				int exitStatus=WEXITSTATUS(status);
+				if(exitStatus||!exitStatus)
+					execute_this(com->u.command[1]);
 			}
 			break;
 		}
