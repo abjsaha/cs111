@@ -64,6 +64,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 			if (!com->output && !com->input )
 				printf("no input or output");
 			execvp(com->u.word[0],com->u.word);
+			break;
 		}
 		case (SEQUENCE_COMMAND):
 		{
@@ -83,6 +84,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 				else
 					execute_this(com->u.command[1]);
 			}
+			break;
 		}
 		case (OR_COMMAND)://deal with if information is successful
 		{
@@ -112,6 +114,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					}
 				}
 			}
+			break;
 		}
 		case (AND_COMMAND)://deal with if information is not successful
 		{
@@ -141,6 +144,7 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					}
 				}
 			}
+			break;
 		}
 		case (PIPE_COMMAND):
 		{
@@ -203,10 +207,12 @@ void execute_this(command_t com)//TODO: deal with not returning to main process
 					}
 				}
 			}
+			break;
 		}
 		case (SUBSHELL_COMMAND):
 		{
 			execute_this(com->u.subshell_command);
+			break;
 		}
 	}	
 }
