@@ -1,0 +1,3 @@
+ls > test1.txt
+
+sort -r < test1.txt|tr '[:lower:]' '[:upper:]'|tr -d '~'
