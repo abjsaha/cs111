@@ -53,19 +53,29 @@ main (int argc, char **argv)
 
   command_t last_command = NULL;
   command_t command;
-  while ((command = read_command_stream (command_stream)))
+  if (time_travel)
+  {
+    //construct dependency graph
+    DependencyGraph * graph = createGraph(command_stream);
+    int final status = 0;
+    finalstatus = executeGraph(graph);
+    return finalstatus;
+  }
+  else
+  {
+    while ((command = read_command_stream (command_stream)))
     {
       if (print_tree)
-	{
-	  printf ("# %d\n", command_number++);
-	  print_command (command);
-	}
+	    {
+	     printf ("# %d\n", command_number++);
+	     print_command (command);
+	    }
       else
-	{
-	  last_command = command;
-	  execute_command (command, time_travel);
-	}
+	    {
+	     last_command = command;
+	     execute_command (command, time_travel);
+	    }
     }
-
-  return print_tree || !last_command ? 0 : command_status (last_command);
+    return print_tree || !last_command ? 0 : command_status (last_command);
+  }
 }
