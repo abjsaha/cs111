@@ -18,7 +18,7 @@ Parallelism
 RAW - echo hello > a.txt, cat a.txt.
 			expect to read after write, but if it's parallel it might read the old value of a.txt
 WAR - cat a.txt, echo hello > a.txt
-RAR - echo hello > a.txt, echo abc > a.txt
+WAW - echo hello > a.txt, echo abc > a.txt
 
 If things are executed in parallel, no guarantee it will execute in the expected order.
 In these three cases, we need to worry about dependency between commands.
@@ -39,7 +39,7 @@ tree2->WRITELIST = {}
 tree1->WL intersect tree2->RL = {a.txt} therefore there is dependency
 
 bool haveDependency (CTree, BTree)
-	A->WL intersect B->RL = nonempty then there is dependency
+	if A->WL intersect B->RL = nonempty, then there is dependency
 
 READLIST contains... input fields
 WRITELIST contains... output fields
@@ -47,10 +47,12 @@ WRITELIST contains... output fields
 you're allowed to give false positive because it does not affect correctness
 we do not need to achieve 100% parallelism
 so for each command, we can fill readlist with word[1], word[2]...
-example: echo hello > a.txt , echo < a.txt should not be a dependency because echo < a.txt is not reading a.txt, it is just 
+example: echo hello > a.txt , echo a.txt should not be a dependency because echo a.txt is not reading a.txt, it is just 
 printing it out to the screen. it is okay to give this a false positive.
 
 ignore options, don't store in read list
+if word[0][0] == "-"; (then it is an option) ?? 
+
 
 main.c must be modified
 before execute_command, we have to construct a dependency graph to track dependency between nodes
@@ -59,10 +61,11 @@ then when execute_command is called, it will be able to execute properly
 construct the graph data structure:
 
 typedef struct {
-	commant_t command;  	//root of command tree
+	commant_t command;  					//root of command tree
 	struct GraphNode ** before;   //list of nodes that this node is waiting on
-	pid_t pid; //initialized to -1, pid of process that will execute this command. if -1 then no child has been spawn to execute this
-							//if pid >= 0, then a child has already been spawned.
+	pid_t pid;										//initialized to -1, pid of process that will execute this command. if -1 then no child has been 
+																//spawn to execute this
+																//if pid >= 0, then a child has already been spawned.
 } GraphNode;
 
 typedef struct{
@@ -85,10 +88,10 @@ STEP TWO: CHECK DEPENDENCIES
 			initialize graphNode to store tree K
 			create a linked list node (new data structure) that contains the graphnode we just created, RL, and WL.
 			insert this linked list node at the head of the linked list 
-			//check if it has dependency with any of the trees procesed before it
-			//iterate through all previous command trees
+			//check if it has dependency with any of the trees procesed before it (rest of the linked list)
+			//iterate through all previous command trees (rest of the linked list)
 			for each previous command tree j (before k):
-				check dependency between j and k by comparing read lists and write lists (WAR, RAW, WAR) which are stored in the linked list
+				check dependency between j and k by comparing read lists and write lists (WAR, RAW, WAW) which are stored in the linked list
 				if there is dependency between j and k, add j to k's before list
 STEP THREE: BUILD DEPENDENCY GRAPH
 			if the before list is null, add this graph node into the no dependency queue
@@ -99,7 +102,7 @@ STEP THREE: BUILD DEPENDENCY GRAPH
 
 processCommand(command_t command){
 	//generate RL and WL for each command
-	recursively iterates through command[0] and command[1]
+	//recursively iterates through command[0] and command[1]
 	if cmd->type == SIMPLE_COMMAND
 		store cmd->input, cmd->u.word[1] into readlist (filter out options)
 		store cmd->output into writelist
