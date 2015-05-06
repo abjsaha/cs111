@@ -7,6 +7,7 @@
 #include <fcntl.h> 		//for open()
 #include <error.h>
 
+void createGraph(command_stream);
 void execute_this(command_t com);
 
 int
@@ -15,6 +16,54 @@ command_status (command_t c)
   return c->status;
 }
 
+typedef struct linkedListNode *linkedListNode_t;
+typedef struct graphNode *graphNode_t;
+linkedListNode_t linkedListHead;
+
+struct graphNode
+{
+	commant_t command;  		  //root of command tree
+	graphNode_t* before;   //list of nodes that this node is waiting on
+	pid_t pid;					  //initialized to -1, pid of process that will execute this command. if -1 then no child has been 
+								  //spawn to execute this
+								  //if pid >= 0, then a child has already been spawned.
+	graphNode_t next;
+};
+
+typedef struct{
+	graphNode_t no_dependencies; 
+	graphNode_t dependencies;
+} dependencyGraph;
+
+
+struct linkedListNode
+{
+	graphNode_t gNode;
+	linkedListNode_t next; 	//do we need to typedef this?
+	char** RL;
+	char** WL;
+};
+
+void addLinkedListNode(linkedListNode_t node)
+{
+	node->next = linkedListHead;
+	linkedListHead->next = node;
+}
+
+void addToNoDep(graphNode_t node, dependencyGraph graph) //add a graph node to the nodependency list
+{
+	node->next=graph.no_dependencies;
+	graph.no_dependencies->next=node;
+}
+
+
+void addToDep(graphNode_t node)
+{
+	node->next=graph.dependencies;
+	graph.dependencies->next=node;
+}
+
+void processCommand(command_t cmd);
 
 void
 execute_command (command_t c, bool time_travel)
@@ -209,3 +258,86 @@ void execute_this(command_t com)
 		}
 	}	
 }
+
+
+
+DependencyGraph* createGraph(command_stream_t comStream)
+{
+	while (comStream->head)
+	{
+		processCommand(comStream->head->rootCommand);
+
+
+		comStream->head = comStream->head->next; //iterate through command stream
+	}
+
+}
+
+void processCommand(command_t cmd)
+{
+	if (cmd == NULL)
+		return;
+	if (cmd->type == SIMPLE_COMMAND)
+	{
+		//create RL/WL
+		if(cmd->input)
+		{
+			//add to RL
+
+		}
+		if(cmd->output)
+		{
+			//add to WL
+			
+		}
+	}
+	else if (cmd->type == SUBSHELL_COMMAND)
+	{
+		processCommand(cmd->u.subshell_command);
+	}
+	else
+	{
+		processCommand(cmd->u.command[0]);
+		processCommand(cmd->u.command[1]);
+	}
+
+}
+
+/*
+psuedo code for building the dependency graph: createGraph (command_stream)
+ultimate goal is to fill in the two data structures we just created: graphNode and DependencyGraph
+
+For each command tree K in the command stream (iterate through stream), do the following:
+STEP ONE: CREATE READ LIST AND WRITE LIST
+		processcommand(k->command); 	//create RL and WL for k's command tree
+STEP TWO: CHECK DEPENDENCIES
+			initialize graphNode to store tree K
+			create a linked list node (new data structure) that contains the graphnode we just created, RL, and WL.
+			insert this linked list node at the head of the linked list 
+			//check if it has dependency with any of the trees procesed before it (rest of the linked list)
+			//iterate through all previous command trees (rest of the linked list)
+			for each previous command tree j (before k):
+				check dependency between j and k by comparing read lists and write lists (WAR, RAW, WAW) which are stored in the linked list
+				if there is dependency between j and k, add j to k's before list
+STEP THREE: BUILD DEPENDENCY GRAPH
+			if the before list is null, add this graph node into the no dependency queue
+			if the before list is not null, add this graph node into the dependency queue
+
+
+
+
+processCommand(command_t command){
+	//generate RL and WL for each command
+	//recursively iterates through command[0] and command[1]
+	if cmd->type == SIMPLE_COMMAND
+		store cmd->input, cmd->u.word[1] into readlist (filter out options)
+		store cmd->output into writelist
+	else if cmd-type == SUBSHELL_COMMAND
+		store cmd->input into readlist
+		store cmd->output into writelist   			//subshell commands have inputs/outputs?? ask on piazza
+		processCommand(cmd->u.subshell_command)
+	else 
+		processCommand(cmd->u.command[0]);
+		processCommand(cmd->u. command[1]);
+}
+*/
