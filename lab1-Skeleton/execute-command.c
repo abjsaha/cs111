@@ -22,7 +22,7 @@ linkedListNode_t linkedListHead;
 
 struct graphNode
 {
-	commant_t command;  		  //root of command tree
+	command_t command;  		  //root of command tree
 	graphNode_t* before;   //list of nodes that this node is waiting on
 	pid_t pid;					  //initialized to -1, pid of process that will execute this command. if -1 then no child has been 
 								  //spawn to execute this
@@ -262,11 +262,26 @@ void execute_this(command_t com)
 
 
 DependencyGraph* createGraph(command_stream_t comStream)
-{
+{	
+	//initialize graph node and linked list node:
+	graphNode_t curGraphNode;
+	linkedListNode_t curLinkedListNode;
 	while (comStream->head)
 	{
+	//initialize graph node:
+		curGraphNode->command = comStream->head;
+		curGraphNode->pid = -1;
+	//update linked list node:
+		curLinkedListNode->gNode = curGraphNode;
 		processCommand(comStream->head->rootCommand);
-
+	//store linked list node in linked list:
+		addLinkedListNode(curLinkedListNode);
+	//Step 2: Check Dependencies:
+	//Step 3: Add to Graph
+		if (curGraphNode->before) 		//before list has some content
+			addToDep(curGraphNode);
+		else 							//before list is empty
+			addToNoDep(curGraphNode);
 
 		comStream->head = comStream->head->next; //iterate through command stream
 	}
@@ -288,8 +303,9 @@ void processCommand(command_t cmd)
 		if(cmd->output)
 		{
 			//add to WL
-			
+
 		}
+		//also add words to RL ignoring options
 	}
 	else if (cmd->type == SUBSHELL_COMMAND)
 	{
