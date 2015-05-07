@@ -433,10 +433,47 @@ void processCommand(command_t cmd)
 	}
 
 }
-
-void executeGraph()
+void executeNoDependencies(graphNode_t nodep)
 {
-	
+	while(nodep)
+	{
+		pid_t pid=fork();
+		if(pid==0)
+		{
+			execute_command(nodep->command,true);
+			exit(0);
+		}
+		else
+		{
+			nodep->pid=pid;
+		}
+		nodep=nodep->next;
+	}
+}
+int executeDependencies(graphNode_t dep)
+{
+	while(dep)
+	{
+		int status;
+		while(dep->before)
+		{
+			waitpid(dep->before->pid,&status,0);
+			dep->before++;
+		}
+		pid_t pid=fork();
+		if(pid==0)
+		{
+			execute_command(dep->command,true);
+			exit(0);
+		}
+		dep=dep->next;
+	}
+}
+int executeGraph(dependencyGraph mainGraph)
+{
+	executeNoDependencies(mainGraph->no_dependencies);
+	int status=executeDependencies(mainGraph->dependencies);
+	return status;
 }
 
 /*
