@@ -19,6 +19,8 @@ int readListSize=1024;
 int writeListSize=1024;
 int readListIndex=0;
 int writeListIndex=0;
+char* readlist;
+char* writelist;
 typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
 linkedListNode_t linkedListHead;
@@ -285,8 +287,17 @@ DependencyGraph* createGraph(command_stream_t comStream)
 		curGraphNode->pid = -1;
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
+		memset(readlist,0,strlen(readlist));
+        readListIndex=0;
+        readListSize=1024;
+        readlist=(char*)checked_malloc(sizeof(char)*readListSize);
+       	writeListIndex=0;
+        writeListSize=1024;
+        writelist=(char*)checked_malloc(sizeof(char)*writeListSize);
 		processCommand(comStream->head->rootCommand); //add linkedlistnode parameter so we can update RL and WL in process command?
 	//store linked list node in linked list:
+		curLinkedListNode->RL=readlist;
+		curLinkedListNode->WL=writelist;
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
 		if (checkDependency(curLinkedListNode, otherLinkedListNode))
