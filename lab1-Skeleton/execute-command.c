@@ -259,7 +259,16 @@ void execute_this(command_t com)
 	}	
 }
 
-
+bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
+{
+	//check WAW
+	//check WAR
+	//check RAW
+	//if all intersections are empty
+		return false;
+	else
+		return true;
+}
 
 DependencyGraph* createGraph(command_stream_t comStream)
 {	
@@ -273,10 +282,12 @@ DependencyGraph* createGraph(command_stream_t comStream)
 		curGraphNode->pid = -1;
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
-		processCommand(comStream->head->rootCommand);
+		processCommand(comStream->head->rootCommand); //add linkedlistnode parameter so we can update RL and WL in process command?
 	//store linked list node in linked list:
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
+		if (checkDependency(curLinkedListNode, otherLinkedListNode))
+			//add the graph node in the otherLinkedListNode to curLinkedListNode's graphnode's before list
 	//Step 3: Add to Graph
 		if (curGraphNode->before) 		//before list has some content
 			addToDep(curGraphNode);
