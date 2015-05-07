@@ -273,13 +273,40 @@ void execute_this(command_t com)
 
 bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 {
+	int curWLlen = wordLength(curNode->WL);
+	int curRLlen = wordLength(curNode->RL);
+	int otherWLlen = wordLength(otherNode->WL);
+	int otherRLlen = wordLength(otherNode->RL);
 	//check WAW
+	int i = 0, j = 0;
+	for (i = 0; i < curWLlen; i++)
+	{
+		for (j = 0; j < otherWLlen; j++)
+		{
+			if (strcmp(curNode->WL[i], otherNode->WL[j]))
+				return true;
+		}
+	}
 	//check WAR
+	for (i = 0; i < curWLlen; i++)
+	{
+		for (j = 0; j < otherRLlen; j++)
+		{
+			if (strcmp(curNode->WL[i], otherNode->RL[j]))
+				return true;
+		}
+	}
 	//check RAW
-	//if all intersections are empty
-		return false;
-	else
-		return true;
+	for (i = 0; i < curRLlen; i++)
+	{
+		for (j = 0; j < otherWLlen; j++)
+		{
+			if (strcmp(curNode->RL[i], otherNode->WL[j]))
+				return true;
+		}
+	}
+	
+	return false;
 }
 
 DependencyGraph* createGraph(command_stream_t comStream)
