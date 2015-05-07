@@ -15,7 +15,10 @@ command_status (command_t c)
 {
   return c->status;
 }
-
+int readListSize=1024;
+int writeListSize=1024;
+int readListIndex=0;
+int writeListIndex=0;
 typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
 linkedListNode_t linkedListHead;
@@ -298,7 +301,16 @@ DependencyGraph* createGraph(command_stream_t comStream)
 	}
 
 }
-
+void reallocReadList()
+{
+	readListSize*=2;
+ 	readlist=(char*)checked_realloc(readlist,readListSize);
+}
+void reallocWriteList()
+{
+	writeListSize*=2;
+ 	writelist=(char*)checked_realloc(writelist,writeListSize);
+}
 void processCommand(command_t cmd)
 {
 	if (cmd == NULL)
@@ -309,12 +321,20 @@ void processCommand(command_t cmd)
 		if(cmd->input)
 		{
 			//add to RL
-
+			readlist[readListIndex++]=cmd->input;
+			if(readListIndex==readListSize)
+			{
+				reallocReadList();
+			}
 		}
 		if(cmd->output)
 		{
 			//add to WL
-
+			writelist[writeListIndex++]=cmd->input;
+			if(writeListIndex==writeListSize)
+			{
+				reallocWriteList();
+			}
 		}
 		//also add words to RL ignoring options
 	}
