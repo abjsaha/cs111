@@ -57,7 +57,7 @@ main (int argc, char **argv)
   {
     //construct dependency graph
     dependencyGraph * graph = createGraph(command_stream);
-    int final status = 0;
+    int finalstatus = 0;
     finalstatus = executeGraph(graph);
     return finalstatus;
   }
