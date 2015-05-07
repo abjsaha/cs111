@@ -287,6 +287,7 @@ DependencyGraph* createGraph(command_stream_t comStream)
 	//initialize graph node and linked list node:
 	graphNode_t curGraphNode;
 	linkedListNode_t curLinkedListNode;
+	linkedListNode_t temp;
 	while (comStream->head)
 	{
 	//initialize graph node:
@@ -319,8 +320,16 @@ DependencyGraph* createGraph(command_stream_t comStream)
 		curLinkedListNode->WL=writelist;
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
-		if (checkDependency(curLinkedListNode, otherLinkedListNode))
+		temp=curLinkedListNode->next;
+		while(temp)
+		{
+			if (checkDependency(curLinkedListNode, temp))
+			{
+
+			}
 			//add the graph node in the otherLinkedListNode to curLinkedListNode's graphnode's before list
+			temp=temp->next;
+		}
 	//Step 3: Add to Graph
 		if (curGraphNode->before) 		//before list has some content
 			addToDep(curGraphNode);
