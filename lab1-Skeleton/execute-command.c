@@ -19,8 +19,10 @@ int readListSize=1024;
 int writeListSize=1024;
 int readListIndex=0;
 int writeListIndex=0;
-char* readlist;
-char* writelist;
+int readListSizeTracker=0;
+int writeListSizeTracker=0;
+char** readlist;
+char** writelist;
 typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
 linkedListNode_t linkedListHead;
@@ -287,13 +289,25 @@ DependencyGraph* createGraph(command_stream_t comStream)
 		curGraphNode->pid = -1;
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
-		memset(readlist,0,strlen(readlist));
+		int i=0;
+		for(i=0;i<readListIndex;i++)
+		{
+			memset(readlist[i],0,strlen(readlist[i]));
+		}
+		for(i=0;i<writeListIndex;i++)
+		{
+			memset(writelist[i],0,strlen(writelist[i]));
+		}
+		memset(readlist,0,readListSizeTracker);
+		memset(writelist,0,writeListSizeTracker);
         readListIndex=0;
+        readListSizeTracker=0;
         readListSize=1024;
-        readlist=(char*)checked_malloc(sizeof(char)*readListSize);
+        readlist=(char**)checked_malloc(sizeof(char*)*readListSize);
        	writeListIndex=0;
+       	writeListSizeTracker=0;
         writeListSize=1024;
-        writelist=(char*)checked_malloc(sizeof(char)*writeListSize);
+        writelist=(char**)checked_malloc(sizeof(char*)*writeListSize);
 		processCommand(comStream->head->rootCommand); //add linkedlistnode parameter so we can update RL and WL in process command?
 	//store linked list node in linked list:
 		curLinkedListNode->RL=readlist;
@@ -315,12 +329,12 @@ DependencyGraph* createGraph(command_stream_t comStream)
 void reallocReadList()
 {
 	readListSize*=2;
- 	readlist=(char*)checked_realloc(readlist,readListSize);
+ 	readlist=(char**)checked_realloc(readlist,readListSize);
 }
 void reallocWriteList()
 {
 	writeListSize*=2;
- 	writelist=(char*)checked_realloc(writelist,writeListSize);
+ 	writelist=(char**)checked_realloc(writelist,writeListSize);
 }
 void processCommand(command_t cmd)
 {
@@ -332,7 +346,8 @@ void processCommand(command_t cmd)
 		if(cmd->input)
 		{
 			//add to RL
-			readlist[readListIndex++]=cmd->input;
+			readlist[readListSizeTracker++]=cmd->input;
+			readListIndex+=strlen(cmd->input);
 			if(readListIndex==readListSize)
 			{
 				reallocReadList();
@@ -341,7 +356,8 @@ void processCommand(command_t cmd)
 		if(cmd->output)
 		{
 			//add to WL
-			writelist[writeListIndex++]=cmd->input;
+			writelist[writeListSizeTracker++]=cmd->output;
+			writeListIndex+=strlen(cmd->output);
 			if(writeListIndex==writeListSize)
 			{
 				reallocWriteList();
