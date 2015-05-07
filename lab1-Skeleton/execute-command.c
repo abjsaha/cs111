@@ -82,7 +82,12 @@ execute_command (command_t c, bool time_travel)
 
   //error (1, 0, "command execution not yet implemented");
 }
-
+int wordLength(char** words)
+{
+	int size=0;
+	while(words[size]!=NULL)size++;
+	return size;
+}
 void execute_this(command_t com)
 {
 	//given pointer to a command
@@ -364,6 +369,22 @@ void processCommand(command_t cmd)
 			}
 		}
 		//also add words to RL ignoring options
+		int i=0;
+		int length=wordLength(cmd->u.word);
+		for(i=0;i<length;i++)
+		{
+			if(cmd->u.word[i][0]=='-')
+				continue;
+			else
+			{
+				readlist[readListSizeTracker++]=cmd->word[i];
+				readListIndex+=strlen(cmd->word[i]);
+				if(readListIndex==readListSize)
+				{
+					reallocReadList();
+				}
+			}
+		}
 	}
 	else if (cmd->type == SUBSHELL_COMMAND)
 	{
