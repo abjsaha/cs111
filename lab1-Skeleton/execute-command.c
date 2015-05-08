@@ -38,7 +38,8 @@ struct graphNode
 	graphNode_t next;
 };
 
-struct dg{
+struct dg
+{
 	graphNode_t no_dependencies; 
 	graphNode_t dependencies;
 };
@@ -65,7 +66,7 @@ void addToNoDep(graphNode_t node, dependencyGraph graph) //add a graph node to t
 }
 
 
-void addToDep(graphNode_t node)
+void addToDep(graphNode_t node, dependencyGraph graph)
 {
 	node->next=graph.dependencies;
 	graph.dependencies->next=node;
@@ -472,8 +473,8 @@ int executeDependencies(graphNode_t dep)
 }
 int executeGraph(dependencyGraph mainGraph)
 {
-	executeNoDependencies(mainGraph->no_dependencies);
-	int status=executeDependencies(mainGraph->dependencies);
+	executeNoDependencies(mainGraph.no_dependencies);
+	int status=executeDependencies(mainGraph.dependencies);
 	return status;
 }
 
