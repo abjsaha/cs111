@@ -56,7 +56,7 @@ main (int argc, char **argv)
   if (time_travel)
   {
     //construct dependency graph
-    dependencyGraph * graph = createGraph(command_stream);
+    dependencyGraph* graph = createGraph(command_stream);
     int finalstatus = 0;
     finalstatus = executeGraph(graph);
     return finalstatus;
