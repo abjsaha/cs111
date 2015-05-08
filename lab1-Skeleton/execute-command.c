@@ -309,7 +309,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 	return false;
 }
 
-DependencyGraph* createGraph(command_stream_t comStream)
+dependencyGraph* createGraph(command_stream_t comStream)
 {	
 	//initialize graph node and linked list node:
 	graphNode_t curGraphNode;
