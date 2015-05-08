@@ -415,8 +415,8 @@ void processCommand(command_t cmd)
 				continue;
 			else
 			{
-				readlist[readListSizeTracker++]=cmd->word[i];
-				readListIndex+=strlen(cmd->word[i]);
+				readlist[readListSizeTracker++]=cmd->u.word[i];
+				readListIndex+=strlen(cmd->u.word[i]);
 				if(readListIndex==readListSize)
 				{
 					reallocReadList();
@@ -457,10 +457,11 @@ int executeDependencies(graphNode_t dep)
 	while(dep)
 	{
 		int status;
-		while(dep->before)
+		int i=0;
+		while(dep->before[i])
 		{
-			waitpid(dep->before->pid,&status,0);
-			dep->before++;
+			waitpid(dep->before[i]->pid,&status,0);
+			i++;
 		}
 		pid_t pid=fork();
 		if(pid==0)
