@@ -25,6 +25,7 @@ char** readlist;
 char** writelist;
 typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
+typedef struct dg dependencyGraph;
 linkedListNode_t linkedListHead;
 
 struct graphNode
@@ -37,10 +38,10 @@ struct graphNode
 	graphNode_t next;
 };
 
-typedef struct{
+struct dg{
 	graphNode_t no_dependencies; 
 	graphNode_t dependencies;
-} dependencyGraph;
+};
 
 
 struct linkedListNode
