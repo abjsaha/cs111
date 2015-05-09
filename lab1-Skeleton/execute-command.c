@@ -7,7 +7,6 @@
 #include <fcntl.h> 		//for open()
 #include <error.h>
 
-void createGraph(command_stream);
 void execute_this(command_t com);
 
 int
