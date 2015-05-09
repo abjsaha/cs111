@@ -440,12 +440,12 @@ void processCommand(command_t cmd, linkedListNode_t curLinkedListNode)
 	}
 	else if (cmd->type == SUBSHELL_COMMAND)
 	{
-		processCommand(cmd->u.subshell_command);
+		processCommand(cmd->u.subshell_command, curLinkedListNode);
 	}
 	else
 	{
-		processCommand(cmd->u.command[0]);
-		processCommand(cmd->u.command[1]);
+		processCommand(cmd->u.command[0], curLinkedListNode);
+		processCommand(cmd->u.command[1], curLinkedListNode);
 	}
 
 }
