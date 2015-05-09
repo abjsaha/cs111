@@ -316,7 +316,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 		curLinkedListNode=NULL;
 		curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 		curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
-		curGraphNode->command = comStream->head;
+		curGraphNode->command = comStream->head->rootCommand;
 		curGraphNode->pid = -1;
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
