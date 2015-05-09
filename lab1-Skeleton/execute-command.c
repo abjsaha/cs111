@@ -56,7 +56,7 @@ void addToDep(graphNode_t node, dependencyGraph* graph)
 	//}
 }
 
-void processCommand(command_t cmd);
+void processCommand(command_t cmd, linkedListNode_t curLinkedListNode);
 
 void
 execute_command (command_t c, bool time_travel)
