@@ -1,5 +1,5 @@
 // UCLA CS 111 Lab 1 command execution
-
+#include <string.h>
 #include "command.h"
 #include "command-internals.h"
 #include <sys/wait.h> 	//for forking
@@ -59,17 +59,17 @@ void addLinkedListNode(linkedListNode_t node)
 	linkedListHead->next = node;
 }
 
-void addToNoDep(graphNode_t node, dependencyGraph graph) //add a graph node to the nodependency list
+void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to the nodependency list
 {
-	node->next=graph.no_dependencies;
-	graph.no_dependencies->next=node;
+	node->next=graph->no_dependencies;
+	graph->no_dependencies->next=node;
 }
 
 
-void addToDep(graphNode_t node, dependencyGraph graph)
+void addToDep(graphNode_t node, dependencyGraph* graph)
 {
-	node->next=graph.dependencies;
-	graph.dependencies->next=node;
+	node->next=graph->dependencies;
+	graph->dependencies->next=node;
 }
 
 void processCommand(command_t cmd);
@@ -360,10 +360,11 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
+		dependencyGraph* sent;
 		if (curGraphNode->before) 		//before list has some content
-			addToDep(curGraphNode);
+			addToDep(curGraphNode, sent);
 		else 							//before list is empty
-			addToNoDep(curGraphNode);
+			addToNoDep(curGraphNode, sent);
 
 		comStream->head = comStream->head->next; //iterate through command stream
 	}
