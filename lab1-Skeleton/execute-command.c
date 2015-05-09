@@ -283,6 +283,8 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 dependencyGraph* createGraph(command_stream_t comStream)
 {	
 	//initialize graph node and linked list node:
+	int indexBefore=0;
+	int sizeBefore=1024;
 	dependencyGraph actual;
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
@@ -323,11 +325,17 @@ dependencyGraph* createGraph(command_stream_t comStream)
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
 		temp=curLinkedListNode->next;
+		curLinkedListNode->before=(graphNode_t*)checked_malloc(sizeof(graphNode_t)*sizeBefore);
 		while(temp)
 		{
 			if (checkDependency(curLinkedListNode, temp))
 			{
-
+				curLinkedListNode->before[indexBefore++]=temp;
+				if(indexBefore==sizeBefore)
+				{
+					sizeBefore*=2;
+					curLinkedListNode->before=(graphNode_t*)checked_realloc(curLinkedListNode->before,sizeBefore);
+				}
 			}
 			//add the graph node in the otherLinkedListNode to curLinkedListNode's graphnode's before list
 			temp=temp->next;
