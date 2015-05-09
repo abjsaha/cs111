@@ -9,7 +9,7 @@
 
 void createGraph(command_stream);
 void execute_this(command_t com);
-
+dependencyGraph* createGraph(command_stream_t comStream);
 int
 command_status (command_t c)
 {
