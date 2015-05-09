@@ -72,7 +72,7 @@ int wordLength(char** words)
 {
 	int size=0;
 	if(words)
-		while(words[size])size++;
+		while(words[size]&&words[size][0])size++;
 	return size;
 }
 void execute_this(command_t com)
