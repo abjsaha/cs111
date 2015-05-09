@@ -56,7 +56,7 @@ execute_command (command_t c, bool time_travel)
 int wordLength(char** words)
 {
 	int size=0;
-	while(words[size]!=NULL)size++;
+	while(words[size])size++;
 	return size;
 }
 void execute_this(command_t com)
