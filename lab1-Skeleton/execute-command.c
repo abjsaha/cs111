@@ -22,34 +22,8 @@ int readListSizeTracker=0;
 int writeListSizeTracker=0;
 char** readlist;
 char** writelist;
-typedef struct linkedListNode *linkedListNode_t;
-typedef struct graphNode *graphNode_t;
-typedef struct dg dependencyGraph;
 linkedListNode_t linkedListHead;
-struct graphNode
-{
-	command_t command;  		  //root of command tree
-	graphNode_t* before;   //list of nodes that this node is waiting on
-	pid_t pid;					  //initialized to -1, pid of process that will execute this command. if -1 then no child has been 
-								  //spawn to execute this
-								  //if pid >= 0, then a child has already been spawned.
-	graphNode_t next;
-};
 
-struct dg
-{
-	graphNode_t no_dependencies; 
-	graphNode_t dependencies;
-};
-
-
-struct linkedListNode
-{
-	graphNode_t gNode;
-	linkedListNode_t next; 	//do we need to typedef this?
-	char** RL;
-	char** WL;
-};
 
 void addLinkedListNode(linkedListNode_t node)
 {
