@@ -318,11 +318,11 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
 		int i=0;
-		for(i=0;i<readListIndex;i++)
+		for(i=0;i<readListSizeTracker;i++)
 		{
 			memset(readlist[i],0,strlen(readlist[i]));
 		}
-		for(i=0;i<writeListIndex;i++)
+		for(i=0;i<writeListSizeTracker;i++)
 		{
 			memset(writelist[i],0,strlen(writelist[i]));
 		}
