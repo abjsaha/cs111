@@ -361,7 +361,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
-		if (curGraphNode->before) 		//before list has some content
+		if (curLinkedListNode->gNode->before[0]) 		//before list has some content
 			addToDep(curGraphNode, sent);
 		else 							//before list is empty
 			addToNoDep(curGraphNode, sent);
