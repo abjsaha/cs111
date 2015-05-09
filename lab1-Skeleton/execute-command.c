@@ -341,26 +341,28 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//store linked list node in linked list:
 		curLinkedListNode->RL=readlist;
 		curLinkedListNode->WL=writelist;
+		curLinkedListNode->next=NULL;
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
-		temp=curLinkedListNode->next;
+		temp=linkedListHead->next;
 		//curLinkedListNode->gNode=(graphNode_t)checked_malloc(sizeof(graphNode)*)
-		curLinkedListNode->gNode->before=(graphNode_t*)checked_malloc(sizeof(graphNode_t)*sizeBefore);
+		linkedListHead->gNode->before=(graphNode_t*)checked_malloc(sizeof(graphNode_t)*sizeBefore);
 		while(temp)
 		{
-			if (checkDependency(curLinkedListNode, temp))
+			if (checkDependency(linkedListHead, temp))
 			{
-				curLinkedListNode->gNode->before[indexBefore++]=temp->gNode;
+				linkedListHead->gNode->before[indexBefore++]=temp->gNode;
 				if(indexBefore==sizeBefore)
 				{
 					sizeBefore*=2;
-					curLinkedListNode->gNode->before=(graphNode_t*)checked_realloc(curLinkedListNode->gNode->before,sizeBefore);
+					linkedListHead->gNode->before=(graphNode_t*)checked_realloc(linkedListHead->gNode->before,sizeBefore);
 				}
 			}
 			//add the graph node in the otherLinkedListNode to curLinkedListNode's graphnode's before list
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
+		curGraphNode->next=NULL;
 		if (curLinkedListNode->gNode->before[0]) 		//before list has some content
 			addToDep(curGraphNode, sent);
 		else 							//before list is empty
