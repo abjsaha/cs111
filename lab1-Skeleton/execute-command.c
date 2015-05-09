@@ -438,6 +438,17 @@ int executeDependencies(graphNode_t dep)
 {
 	while(dep)
 	{
+		outer:
+		int j=0;
+		while(dep->before[j])
+		{
+			if(dep->before[j]->pid==-1)
+			{
+				goto outer;
+			}
+			j++;
+		}
+		
 		int status;
 		int i=0;
 		while(dep->before[i])
