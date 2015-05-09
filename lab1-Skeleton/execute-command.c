@@ -24,36 +24,36 @@ linkedListNode_t linkedListHead;
 
 void addLinkedListNode(linkedListNode_t node)
 {
-	if(!linkedListHead)
+	/*if(!linkedListHead)
 		linkedListHead=node;
 	else
-	{
+	{*/
 		node->next = linkedListHead;
 		linkedListHead = node;
-	}
+	//}
 }
 
 void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to the nodependency list
 {
-	if(!graph->no_dependencies)
+	/*if(!graph->no_dependencies)
 		graph->no_dependencies=node;
 	else
-	{
+	{*/
 		node->next=graph->no_dependencies;
 		graph->no_dependencies=node;
-	}
+	//}
 }
 
 
 void addToDep(graphNode_t node, dependencyGraph* graph)
 {
-	if(!graph->dependencies)
+	/*if(!graph->dependencies)
 		graph->dependencies=node;
 	else
-	{
+	{*/
 		node->next=graph->dependencies;
 		graph->dependencies=node;
-	}
+	//}
 }
 
 void processCommand(command_t cmd);
