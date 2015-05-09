@@ -47,7 +47,7 @@ void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to 
 
 void addToDep(graphNode_t node, dependencyGraph* graph)
 {
-	if(!graph->Dependencies)
+	if(!graph->dependencies)
 		graph->dependencies=node;
 	else
 	{
