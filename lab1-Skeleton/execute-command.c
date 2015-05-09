@@ -285,13 +285,13 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//initialize graph node and linked list node:
 	int indexBefore=0;
 	int sizeBefore=1024;
-	dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(struct dg)*sizeBefore);
+	dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(struct dg));
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
 	dependencyGraph* sent=&actual;
-	graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(graphNode)*sizeBefore);
-	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(linkedListNode)*sizeBefore);
-	linkedListNode_t temp=(linkedListNode_t)checked_malloc(sizeof(linkedListNode)*sizeBefore);
+    graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
+	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
+	linkedListNode_t temp=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	while (comStream->head)
 	{
 	//initialize graph node:
