@@ -358,7 +358,8 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
-		dependencyGraph* sent;
+		dependencyGraph actual;
+		dependencyGraph* sent=&actual;
 		if (curGraphNode->before) 		//before list has some content
 			addToDep(curGraphNode, sent);
 		else 							//before list is empty
@@ -471,10 +472,10 @@ int executeDependencies(graphNode_t dep)
 		dep=dep->next;
 	}
 }
-int executeGraph(dependencyGraph mainGraph)
+int executeGraph(dependencyGraph* mainGraph)
 {
-	executeNoDependencies(mainGraph.no_dependencies);
-	int status=executeDependencies(mainGraph.dependencies);
+	executeNoDependencies(mainGraph->no_dependencies);
+	int status=executeDependencies(mainGraph->dependencies);
 	return status;
 }
 
