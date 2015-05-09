@@ -325,7 +325,8 @@ dependencyGraph* createGraph(command_stream_t comStream)
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
 		temp=curLinkedListNode->next;
-		curLinkedListNode->before=(graphNode_t*)checked_malloc(sizeof(graphNode_t)*sizeBefore);
+		//curLinkedListNode->gNode=(graphNode_t)checked_malloc(sizeof(graphNode)*)
+		curLinkedListNode->gNode->before=(graphNode_t*)checked_malloc(sizeof(graphNode_t)*sizeBefore);
 		while(temp)
 		{
 			if (checkDependency(curLinkedListNode, temp))
