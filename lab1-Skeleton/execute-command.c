@@ -339,8 +339,16 @@ dependencyGraph* createGraph(command_stream_t comStream)
         writelist=(char**)checked_malloc(sizeof(char*)*writeListSize);
 		processCommand(comStream->head->rootCommand); //add linkedlistnode parameter so we can update RL and WL in process command?
 	//store linked list node in linked list:
-		curLinkedListNode->RL=readlist;
-		curLinkedListNode->WL=writelist;
+		curLinkedListNode->RL=(char**)checked_malloc(sizeof(char*)*readListSize);
+		curLinkedListNode->WL=(char**)checked_malloc(sizeof(char*)*readWriteSize);
+		for(i=0;i<readListSizeTracker;i++)
+		{
+			curLinkedListNode->RL[i]=readlist[i];
+		}
+		for(i=0;i<writeListSizeTracker;i++)
+		{
+			curLinkedListNode->WL[i]=writelist[i];
+		}
 		curLinkedListNode->next=NULL;
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
