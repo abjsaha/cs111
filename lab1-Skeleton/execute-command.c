@@ -285,7 +285,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//initialize graph node and linked list node:
 	int indexBefore=0;
 	int sizeBefore=1024;
-	dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(dg)*sizeBefore);
+	dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(struct dg)*sizeBefore);
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
 	dependencyGraph* sent=&actual;
