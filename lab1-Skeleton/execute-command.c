@@ -312,6 +312,10 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 dependencyGraph* createGraph(command_stream_t comStream)
 {	
 	//initialize graph node and linked list node:
+	dependencyGraph actual;
+	//actual.no_dependencies=NULL;
+	//actual.dependencies=NULL;
+	dependencyGraph* sent=&actual;
 	graphNode_t curGraphNode;
 	linkedListNode_t curLinkedListNode;
 	linkedListNode_t temp;
@@ -358,10 +362,6 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
-		dependencyGraph actual;
-		actual.no_dependencies=NULL;
-		actual.dependencies=NULL;
-		dependencyGraph* sent=&actual;
 		if (curGraphNode->before) 		//before list has some content
 			addToDep(curGraphNode, sent);
 		else 							//before list is empty
