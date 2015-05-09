@@ -2,9 +2,6 @@
 #include <string.h>
 #include "command.h"
 #include "command-internals.h"
-#include <sys/wait.h> 	//for forking
-#include <unistd.h> 	//for dup/dup2
-#include <fcntl.h> 		//for open()
 #include <error.h>
 
 void execute_this(command_t com);

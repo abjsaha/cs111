@@ -1,7 +1,9 @@
 // UCLA CS 111 Lab 1 command interface
 
 #include <stdbool.h>
-
+#include <sys/wait.h> 	//for forking
+#include <unistd.h> 	//for dup/dup2
+#include <fcntl.h> 		//for open()
 typedef struct command *command_t;
 typedef struct command_stream *command_stream_t;
 typedef struct commandNode *command_node_t;
