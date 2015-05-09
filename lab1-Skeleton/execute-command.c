@@ -282,6 +282,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 
 dependencyGraph* createGraph(command_stream_t comStream)
 {	
+	linkedListHead=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	//initialize graph node and linked list node:
 	int indexBefore=0;
 	int sizeBefore=1024;
