@@ -29,7 +29,7 @@ void addLinkedListNode(linkedListNode_t node)
 	else
 	{
 		node->next = linkedListHead;
-		linkedListHead->next = node;
+		linkedListHead = node;
 	}
 }
 
@@ -40,7 +40,7 @@ void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to 
 	else
 	{
 		node->next=graph->no_dependencies;
-		graph->no_dependencies->next=node;
+		graph->no_dependencies=node;
 	}
 }
 
@@ -52,7 +52,7 @@ void addToDep(graphNode_t node, dependencyGraph* graph)
 	else
 	{
 		node->next=graph->dependencies;
-		graph->dependencies->next=node;
+		graph->dependencies=node;
 	}
 }
 
