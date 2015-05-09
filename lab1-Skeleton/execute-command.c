@@ -501,8 +501,8 @@ int executeDependencies(graphNode_t dep)
 int executeGraph(dependencyGraph* mainGraph)
 {
 	executeNoDependencies(mainGraph->no_dependencies);
-	int status=executeDependencies(mainGraph->dependencies);
-	return status;
+	//int status=executeDependencies(mainGraph->dependencies);
+	return 0;
 }
 
 /*
