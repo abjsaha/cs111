@@ -27,7 +27,6 @@ typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
 typedef struct dg dependencyGraph;
 linkedListNode_t linkedListHead;
-dependencyGraph* createGraph(command_stream_t comStream);
 struct graphNode
 {
 	command_t command;  		  //root of command tree
@@ -368,7 +367,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 
 		comStream->head = comStream->head->next; //iterate through command stream
 	}
-
+	return sent;
 }
 void reallocReadList()
 {
