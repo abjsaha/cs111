@@ -303,10 +303,9 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	int indexBefore=0;
 	int sizeBefore=1024;
 	//dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(struct dg));
-	dependencyGraph actual;
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
-	dependencyGraph* sent=&actual;
+	dependencyGraph* sent=(dependencyGraph*)checked_malloc(sizeof(dependencyGraph));
     graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
 	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	linkedListNode_t temp;//=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
