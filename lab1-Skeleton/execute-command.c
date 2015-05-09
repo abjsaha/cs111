@@ -9,7 +9,7 @@
 
 void createGraph(command_stream);
 void execute_this(command_t com);
-dependencyGraph* createGraph(command_stream_t comStream);
+
 int
 command_status (command_t c)
 {
@@ -27,7 +27,7 @@ typedef struct linkedListNode *linkedListNode_t;
 typedef struct graphNode *graphNode_t;
 typedef struct dg dependencyGraph;
 linkedListNode_t linkedListHead;
-
+dependencyGraph* createGraph(command_stream_t comStream);
 struct graphNode
 {
 	command_t command;  		  //root of command tree
