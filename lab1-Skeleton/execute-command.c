@@ -438,7 +438,7 @@ int executeDependencies(graphNode_t dep)
 {
 	while(dep)
 	{
-		outer:
+		outer: ;
 		int j=0;
 		while(dep->before[j])
 		{
