@@ -320,7 +320,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//update linked list node:
 		curLinkedListNode->gNode = curGraphNode;
 		int i=0;
-		for(i=0;i<readListSizeTracker;i++)
+		/*for(i=0;i<readListSizeTracker;i++)
 		{
 			memset(readlist[i],0,strlen(readlist[i]));
 		}
@@ -329,7 +329,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			memset(writelist[i],0,strlen(writelist[i]));
 		}
 		memset(readlist,0,readListSizeTracker);
-		memset(writelist,0,writeListSizeTracker);
+		memset(writelist,0,writeListSizeTracker);*/
         readListIndex=0;
         readListSizeTracker=0;
         readListSize=1024;
