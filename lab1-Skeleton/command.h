@@ -4,7 +4,35 @@
 
 typedef struct command *command_t;
 typedef struct command_stream *command_stream_t;
-
+typedef struct commandNode *command_node_t;
+typedef struct opstack *OpStackNode;
+typedef struct comstack *comStackNode;
+typedef struct op operator;
+struct op
+{
+  int precedence;
+  char *data;
+};
+struct commandNode
+{
+  command_t rootCommand; //root of tree
+  command_node_t next;
+};
+struct command_stream
+{
+  command_node_t head;
+  command_node_t tail;
+};
+struct opstack
+{
+  operator *data;
+  OpStackNode next;
+};
+struct comstack
+{
+  command_t data;
+  comStackNode next;
+};
 /* Create a command stream from GETBYTE and ARG.  A reader of
    the command stream will invoke GETBYTE (ARG) to get the next byte.
    GETBYTE will return the next input byte, or a negative number

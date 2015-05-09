@@ -10,35 +10,7 @@
 #define PRECEDENCE_AND_OR 2
 #define PRECEDENCE_PIPE 3
 #define INITIAL_SIZE 1024
-typedef struct commandNode *command_node_t;
-typedef struct opstack *OpStackNode;
-typedef struct comstack *comStackNode;
-typedef struct op operator;
-struct op
-{
-  int precedence;
-  char *data;
-};
-struct commandNode
-{
-  command_t rootCommand; //root of tree
-  command_node_t next;
-};
-struct command_stream
-{
-  command_node_t head;
-  command_node_t tail;
-};
-struct opstack
-{
-  operator *data;
-  OpStackNode next;
-};
-struct comstack
-{
-  command_t data;
-  comStackNode next;
-};
+
 comStackNode comStackHead;
 OpStackNode opStackHead;
 command_stream_t comStreamT;
