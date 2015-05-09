@@ -20,7 +20,7 @@ int writeListSizeTracker=0;
 char** readlist;
 char** writelist;
 linkedListNode_t linkedListHead;
-
+dependencyGraph* graph;
 
 void addLinkedListNode(linkedListNode_t node)
 {
@@ -33,7 +33,7 @@ void addLinkedListNode(linkedListNode_t node)
 	//}
 }
 
-void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to the nodependency list
+void addToNoDep(graphNode_t node) //add a graph node to the nodependency list
 {
 	/*if(!graph->no_dependencies)
 		graph->no_dependencies=node;
@@ -45,7 +45,7 @@ void addToNoDep(graphNode_t node, dependencyGraph* graph) //add a graph node to 
 }
 
 
-void addToDep(graphNode_t node, dependencyGraph* graph)
+void addToDep(graphNode_t node)
 {
 	/*if(!graph->dependencies)
 		graph->dependencies=node;
@@ -305,7 +305,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//dependencyGraph actual=(dependencyGraph)checked_malloc(sizeof(struct dg));
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
-	dependencyGraph* sent=(dependencyGraph*)checked_malloc(sizeof(dependencyGraph));
+	graph=(dependencyGraph*)checked_malloc(sizeof(dependencyGraph));
     graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
 	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	linkedListNode_t temp;//=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
@@ -374,14 +374,14 @@ dependencyGraph* createGraph(command_stream_t comStream)
 		}
 	//Step 3: Add to Graph
 		curGraphNode->next=NULL;
-		if (curLinkedListNode->gNode->before[0]) 		//before list has some content
-			addToDep(curGraphNode, sent);
+		if (linkedListHead->gNode->before[0]) 		//before list has some content
+			addToDep(curGraphNode);
 		else 							//before list is empty
-			addToNoDep(curGraphNode, sent);
+			addToNoDep(curGraphNode);
 
 		comStream->head = comStream->head->next; //iterate through command stream
 	}
-	return sent;
+	return graph;
 }
 void reallocReadList()
 {
