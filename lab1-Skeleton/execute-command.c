@@ -338,18 +338,18 @@ dependencyGraph* createGraph(command_stream_t comStream)
        	writeListSizeTracker=0;
         writeListSize=1024;
         writelist=(char**)checked_malloc(sizeof(char*)*writeListSize);
-		processCommand(comStream->head->rootCommand); //add linkedlistnode parameter so we can update RL and WL in process command?
+		processCommand(comStream->head->rootCommand, curLinkedListNode); //add linkedlistnode parameter so we can update RL and WL in process command?
 	//store linked list node in linked list:
-		curLinkedListNode->RL=(char**)checked_malloc(sizeof(char*)*readListSize);
+		/*curLinkedListNode->RL=(char**)checked_malloc(sizeof(char*)*readListSize);
 		curLinkedListNode->WL=(char**)checked_malloc(sizeof(char*)*writeListSize);
 		for(i=0;i<readListSizeTracker;i++)
 		{
-			curLinkedListNode->RL[i]=readlist[i];
+			curLinkedListNode->RL[i]=(readlist[i]);
 		}
 		for(i=0;i<writeListSizeTracker;i++)
 		{
 			curLinkedListNode->WL[i]=writelist[i];
-		}
+		}*/
 		curLinkedListNode->next=NULL;
 		addLinkedListNode(curLinkedListNode);
 	//Step 2: Check Dependencies:
@@ -391,7 +391,7 @@ void reallocWriteList()
 	writeListSize*=2;
  	writelist=(char**)checked_realloc(writelist,writeListSize);
 }
-void processCommand(command_t cmd)
+void processCommand(command_t cmd, linkedListNode_t curLinkedListNode)
 {
 	if (cmd == NULL)
 		return;
@@ -401,7 +401,7 @@ void processCommand(command_t cmd)
 		if(cmd->input)
 		{
 			//add to RL
-			readlist[readListSizeTracker++]=cmd->input;
+			curLinkedListNode->RL[readListSizeTracker++]=cmd->input;
 			readListIndex+=strlen(cmd->input);
 			if(readListIndex==readListSize)
 			{
@@ -411,7 +411,7 @@ void processCommand(command_t cmd)
 		if(cmd->output)
 		{
 			//add to WL
-			writelist[writeListSizeTracker++]=cmd->output;
+			curLinkedListNode->WL[writeListSizeTracker++]=cmd->output;
 			writeListIndex+=strlen(cmd->output);
 			if(writeListIndex==writeListSize)
 			{
@@ -427,7 +427,7 @@ void processCommand(command_t cmd)
 				continue;
 			else
 			{
-				readlist[readListSizeTracker++]=cmd->u.word[i];
+				curLinkedListNode->RL[readListSizeTracker++]=cmd->u.word[i];
 				readListIndex+=strlen(cmd->u.word[i]);
 				if(readListIndex==readListSize)
 				{
