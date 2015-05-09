@@ -330,11 +330,11 @@ dependencyGraph* createGraph(command_stream_t comStream)
 		{
 			if (checkDependency(curLinkedListNode, temp))
 			{
-				curGraphNode->gNode->before[indexBefore++]=temp->gNode;
+				curLinkedListNode->gNode->before[indexBefore++]=temp->gNode;
 				if(indexBefore==sizeBefore)
 				{
 					sizeBefore*=2;
-					curGraphNode->gNode->before=(graphNode_t*)checked_realloc(curGraphNode->gNode->before,sizeBefore);
+					curLinkedListNode->gNode->before=(graphNode_t*)checked_realloc(curLinkedListNode->gNode->before,sizeBefore);
 				}
 			}
 			//add the graph node in the otherLinkedListNode to curLinkedListNode's graphnode's before list
