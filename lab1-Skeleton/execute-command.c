@@ -309,7 +309,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	dependencyGraph* sent=&actual;
     graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
 	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
-	linkedListNode_t temp=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
+	linkedListNode_t temp;//=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	while (comStream->head)
 	{
 	//initialize graph node:
