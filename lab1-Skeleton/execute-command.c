@@ -285,7 +285,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 	{
 		for (j = 0; j < otherWLlen; j++)
 		{
-			if (strcmp(curNode->WL[i], otherNode->WL[j]))
+			if (strcmp(curNode->WL[i], otherNode->WL[j]) == 0)
 				return true;
 		}
 	}
@@ -294,7 +294,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 	{
 		for (j = 0; j < otherRLlen; j++)
 		{
-			if (strcmp(curNode->WL[i], otherNode->RL[j]))
+			if (strcmp(curNode->WL[i], otherNode->RL[j]) == 0)
 				return true;
 		}
 	}
@@ -303,7 +303,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 	{
 		for (j = 0; j < otherWLlen; j++)
 		{
-			if (strcmp(curNode->RL[i], otherNode->WL[j]))
+			if (strcmp(curNode->RL[i], otherNode->WL[j]) == 0)
 				return true;
 		}
 	}
