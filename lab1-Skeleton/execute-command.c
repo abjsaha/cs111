@@ -55,9 +55,9 @@ void addToDep(graphNode_t node)
 		//graph->dependencies=node;
 	//}
 	int i=0;
-	while(graph->dependencies[i]->next)
+	while(graph->dependencies[i].next)
 		i++;
-	graph->dependencies[i]->next=node;
+	graph->dependencies[i].next=node;
 	node->next=NULL;
 }
 
