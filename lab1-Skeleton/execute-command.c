@@ -63,7 +63,14 @@ execute_command (command_t c, bool time_travel)
 {
 //execute_command takes in a command returned by read_command_stream
 //command_t c is the root of a command tree
-	execute_this(c);
+	int test=fork();
+	if(fork==0)
+		execute_this(c);
+	else
+	{
+		int status;
+		waitpid(test,&status,0);
+	}
 
 
   //error (1, 0, "command execution not yet implemented");
