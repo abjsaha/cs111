@@ -510,6 +510,10 @@ int executeDependencies(graphNode_t dep)
 			execute_command(dep->command,true);
 			exit(0);
 		}
+		else
+		{
+			dep->pid=pid;
+		}
 		dep=dep->next;
 	}
 }
