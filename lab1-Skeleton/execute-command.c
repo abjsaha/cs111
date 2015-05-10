@@ -109,8 +109,8 @@ void execute_this(command_t com)
 		//execvp(com->u.word[0],com->u.word);
 	}
 	//no output or input
-	if (!com->output && !com->input )
-		printf("no input or output");
+	//if (!com->output && !com->input )
+	//	printf("no input or output");
 	switch (com->type) 
 	{
 		case(SIMPLE_COMMAND):
