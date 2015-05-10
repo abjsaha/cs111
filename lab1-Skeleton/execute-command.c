@@ -63,7 +63,14 @@ execute_command (command_t c, bool time_travel)
 {
 //execute_command takes in a command returned by read_command_stream
 //command_t c is the root of a command tree
-	execute_this(c);
+	int p=fork();
+	if(p==0)
+		execute_this(c);
+	else
+	{
+		int status;
+		waitpid(p,&status,0);
+	}
 
 
   //error (1, 0, "command execution not yet implemented");
@@ -79,41 +86,42 @@ void execute_this(command_t com)
 {
 	//given pointer to a command
 	//execute that command
-
+	//input
+	if (com->input)
+	{
+		int fd1 = open(com->input, O_RDONLY, 0644);
+		if (fd1 < 0)
+			error(1, 0, "could not open input file");
+		int fd2 = 0;
+		int fd_dup = dup2(fd1, fd2);
+		if (fd_dup != 0)
+			error(1, 0, "failed to redirect command input");
+		//execvp(com->u.word[0],com->u.word);
+	}
+	//output
+	if (com->output)
+	{
+		int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		if (fd1 < 0)
+			error(1, 0, "could not open output file");
+		int fd2 = 1;
+		dup2(fd1, fd2);
+		//execvp(com->u.word[0],com->u.word);
+	}
+	//no output or input
+	if (!com->output && !com->input )
+		printf("no input or output");
 	switch (com->type) 
 	{
 		case(SIMPLE_COMMAND):
 		{
 			//printf("com->input is %s\n", com->input);
 			//printf("com->output is %s\n", com->output);
+			
 			int p=fork();
 			if(p==0)
 			{
-				//input
-				if (com->input)
-				{
-					int fd1 = open(com->input, O_RDONLY);
-					if (fd1 < 0)
-						error(1, 0, "could not open input file");
-					int fd2 = 0;
-					int fd_dup = dup2(fd1, fd2);
-					if (fd_dup != 0)
-						error(1, 0, "failed to redirect command input");
-					//execvp(com->u.word[0],com->u.word);
-				}
-				//output
-				if (com->output)
-				{
-					int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-					if (fd1 < 0)
-						error(1, 0, "could not open output file");
-					int fd2 = 1;
-					dup2(fd1, fd2);
-					//execvp(com->u.word[0],com->u.word);
-				}
-				//no output or input
-				if (!com->output && !com->input )
-					printf("no input or output");
+				
 				execvp(com->u.word[0],com->u.word);
 				exit(127);
 			}
