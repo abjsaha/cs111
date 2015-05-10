@@ -51,9 +51,14 @@ void addToDep(graphNode_t node)
 		graph->dependencies=node;
 	else
 	{*/
-		node->next=graph->dependencies;
-		graph->dependencies=node;
+		//node->next=graph->dependencies;
+		//graph->dependencies=node;
 	//}
+	int i=0;
+	while(graph->dependencies[i]->next)
+		i++;
+	graph->dependencies[i]->next=node;
+	node->next=NULL;
 }
 
 void processCommand(command_t cmd, linkedListNode_t curLinkedListNode);
