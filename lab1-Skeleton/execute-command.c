@@ -243,8 +243,8 @@ void execute_this(command_t com)
 					{
 						waitpid(secondPid,&status,0);
 					}
-					int exit=WEXITSTATUS(status);
-					com->status=exit;
+					int exitStatus=WEXITSTATUS(status);
+					com->status=exitStatus;
 					exit(1);
 				}
 			}
