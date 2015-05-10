@@ -55,8 +55,9 @@ void addToDep(graphNode_t node)
 		//graph->dependencies=node;
 	//}
 	int i=0;
-	while(graph->dependencies[i].next)
-		i++;
+	if(graph->dependencies)
+		while(graph->dependencies[i].next)
+			i++;
 	graph->dependencies[i].next=node;
 	node->next=NULL;
 }
@@ -327,6 +328,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 	//actual.no_dependencies=NULL;
 	//actual.dependencies=NULL;
 	graph=(dependencyGraph*)checked_malloc(sizeof(dependencyGraph));
+	graph->dependencies=(graphNode_t)checked_malloc(sizeof(struct graphNode));
     graphNode_t curGraphNode=(graphNode_t)checked_malloc(sizeof(struct graphNode));
 	linkedListNode_t curLinkedListNode=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
 	linkedListNode_t temp;//=(linkedListNode_t)checked_malloc(sizeof(struct linkedListNode));
