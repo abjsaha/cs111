@@ -285,6 +285,7 @@ bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
 	{
 		for (j = 0; j < otherWLlen; j++)
 		{
+			//adfj
 			if (strcmp(curNode->WL[i], otherNode->WL[j]) == 0)
 				return true;
 		}
