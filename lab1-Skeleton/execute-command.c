@@ -216,7 +216,7 @@ void execute_this(command_t com)
 				dup2(fd[0],0);
 				execute_this(com->u.command[1]);
 				//close(fd[0]);
-				exit(com->u.command[1]->status);
+				//exit(com->u.command[1]->status);
 			}
 			else
 			{
@@ -230,7 +230,7 @@ void execute_this(command_t com)
 					dup2(fd[1],1);
 					execute_this(com->u.command[0]);
 					//close(fd[1]);
-					exit(com->u.command[1]->status);
+					//exit(com->u.command[1]->status);
 				}
 				else
 				{
