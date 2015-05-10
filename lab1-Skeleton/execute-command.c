@@ -100,6 +100,7 @@ void execute_this(command_t com)
 					if (fd_dup != 0)
 						error(1, 0, "failed to redirect command input");
 					//execvp(com->u.word[0],com->u.word);
+					close(fd1);
 				}
 				//output
 				if (com->output)
@@ -109,6 +110,7 @@ void execute_this(command_t com)
 						error(1, 0, "could not open output file");
 					int fd2 = 1;
 					dup2(fd1, fd2);
+					close(fd1);
 					//execvp(com->u.word[0],com->u.word);
 				}
 				//no output or input
@@ -213,6 +215,7 @@ void execute_this(command_t com)
 				close(fd[1]);
 				dup2(fd[0],0);
 				execute_this(com->u.command[1]);
+				close(fd[0]);
 			}
 			else
 			{
@@ -225,6 +228,7 @@ void execute_this(command_t com)
 					close(fd[0]);
 					dup2(fd[1],1);
 					execute_this(com->u.command[0]);
+					close(fd[1]);
 				}
 				else
 				{
