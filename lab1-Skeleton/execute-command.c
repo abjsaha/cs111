@@ -389,6 +389,7 @@ dependencyGraph* createGraph(command_stream_t comStream)
 			temp=temp->next;
 		}
 	//Step 3: Add to Graph
+		indexBefore=0;
 		curGraphNode->next=NULL;
 		if (linkedListHead->gNode->before[0]) 		//before list has some content
 			addToDep(curGraphNode);
@@ -486,7 +487,7 @@ int executeDependencies(graphNode_t dep)
 {
 	while(dep)
 	{
-		outer: ;
+		/*outer: ;
 		int j=0;
 		while(dep->before[j])
 		{
@@ -495,7 +496,7 @@ int executeDependencies(graphNode_t dep)
 				goto outer;
 			}
 			j++;
-		}
+		}*/
 		
 		int status;
 		int i=0;
