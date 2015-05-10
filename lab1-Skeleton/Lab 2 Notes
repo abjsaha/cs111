@@ -1,0 +1,108 @@
+Lab 2 Notes
+
+
+Discussion: Lab 2 - Ram Disk / Device Drive
+
+In Linux, everything is a file stored in /dev/
+To interact with a device, we have to open the /device file/ which gives us a file descriptor.
+Using Linux 2.6.18 OS. Spec says to download cs111 iso.
+In memory block device used to store data with read/write operations.
+Requirements: read and write to block device, implement synchonization (locking) to handle race conditions.
+
+Different OS uses different data structures in blkdev.h
+Visit http://lxr.linux.no/#linux+v2.6.18 and search blkdev.h, look at struct request definition in this file.
+
+1. Support r/w from/to Ramdisk
+-use memcpy to copy_from_user or copy_to_user (? lab 3?)
+to copy data from user buffer to kernel buffer?
+
+2. Locking
+
+	1) OSPRDIOCACQUIRE //blocking implementation
+	2) OSPRDIOCRELEASE //releasing the lock	
+	3) OSPRDIOCTRYACQUIRE //polling
+
+write lock:
+must check if other processes have read lock or write lock.
+if another process already has read or write lock, must wait for that process to release the lock
+
+read lock:
+must check if other processes have write lock (no need to check read locks).
+
+must maintain r/w list of processes (pids) and check if list is null or not null.
+
+If P1, P2, and P3 all want the write lock, give it to one of them and put the others in a queue. 
+P2 could get the lock, and the queue could hold P1 then P3. When P2 releases, give the lock to P1. 
+Serve the lock in order. First Come First Serve.
+Assign a unique ticket # to each process. We know what the next ticket # is for the process that gets to obtain the lock next.
+This is a global variable which can cause a race condition. Must execute ticket # atomically. 
+This is synchronization at the kernel level, not user level. User shouldn't worry about race conditions. 
+Each process in the queue can compare its ticket number to the next ticket number and knows if it can Aquire the lock next.
+
+ticket_head = 0
+ticket_tail = 0
+
+//these two steps must be executed atomically by each process:
+my_ticket = ticket_head
+ticket_head ++ 
+
+struct request 
+{
+	...userful kernel functions
+}
+
+int wait_event_interruptable(wait_queue_head_t q, condition)
+{
+	//blocks current task on a wait queue until a "condition" becomes true
+	conditions: 
+		- 	my_ticket == ticket_tail
+		- 	
+
+	if condition is false, put into wait queue (go back to sleep)
+	if condition is true, move forward (obtain lock) --> should increment ticket tail here?
+		return 0
+}
+
+if ticket_tail = ticket_head, then we are done and all processes should have moved forward and obtained the lock.
+This is not always the case. there is danger of infinite waiting time.
+If a process dies, then it can never increment the ticket head and none of the other processes can finish.
+a process increments tail because it assumes the next process is alive.
+A process is notified of termination in the queue, wakes up and knows to add itself to termination queue and 
+remove itself from wait queue.
+Need to maintain a global data structure, a list of ticket numbers that are invalid.
+Example: P0 (0) has lock, P1(1) is terminated, add its ticket number to the exited list before it exits. 
+invalid ticket list {1}, P0 should check the invalid ticket list 
+before incrementing ticket tail so that it properly increments to ticket #2. This needs to be atomic
+
+
+if (wait_event_interruptable returns ERESTARTSYS)
+{
+	//add ticket to invalid ticket list
+}
+
+obtain lock by marking flag bit
+something to do with kmalloc
+page 6 has one dead lock test case that we need to pass
+to test all deadlock test cases: construct dependency graph of processes waiting on ram disk
+a circular dependency indicates dead lock
+
+
+step 1: assign unique ticket number to each process
+step 2: each process should call wait_event_interruptable to see if it is its turn, or be put into queue
+ticket number ensures that queue does not need to be kept in exact order because all will be waken up when lock is released
+then all will check the condition individually 
+queue data structure should be in skeleton code already, along with ticket head and ticket tail inside devide criver info
+
+
+a request comes in, determine write/read request
+if write request copy data from user to kernel buffer
+if read request copy data from kernel to user buffer
+how do we determine request type?
+unsigned int requestType = rq_data_dir(req) //returns request type
+//computer offset to the buffer (d->data) to determine where we should start copying from (requested sector #)
+uint8_t * ptr = d->data + (req->sector) * SECTOR_SIZE (data is beginning, sector*size = offset)
+if requestType == READ....
+	memcpy(req->buffer,ptr,req->current_nr_sectors*SECTOR_SIZE)
+else if requestType == WRITE...
+
+never call wait_event_interruptable in child process? idk he will talk about this in office hours

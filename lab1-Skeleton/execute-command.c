@@ -4,13 +4,224 @@
 #include "command-internals.h"
 #include <error.h>
 
-void execute_this(command_t com);
+
+void execute_helper(command_t c, bool time_travel);
+void execute_simple(command_t c);
+void execute_non_redir(command_t c, enum command_type type);
+void handle_io(command_t c);
+void execute_pipe(command_t c);
+
 
 int
 command_status (command_t c)
 {
   return c->status;
 }
+
+void
+execute_command (command_t c, bool time_travel)
+{
+	int p = fork();
+    if (p == 0)
+    {
+	 	execute_helper(c, time_travel);
+	}
+	else
+	{
+		int status;
+		waitpid(p, &status, 0);
+	}
+}
+
+void execute_helper(command_t c, bool time_travel)
+{
+	handle_io(c);
+	switch (c->type)
+ 	{
+ 		case SIMPLE_COMMAND:
+ 		{
+ 			execute_simple(c);
+ 			break;
+ 		}
+ 		case AND_COMMAND:
+ 		case OR_COMMAND:
+ 		case SEQUENCE_COMMAND:
+ 		{
+			execute_non_redir(c, c->type);
+			break;
+ 		}
+ 		case PIPE_COMMAND:
+ 		{
+ 			execute_pipe(c);
+ 			break;
+ 		}
+ 		case SUBSHELL_COMMAND:
+ 		{
+ 			execute_helper(c->u.subshell_command, 0);
+ 			break;
+ 		}
+ 		default:
+ 		{
+ 			abort();
+ 		}
+ 	}
+}
+
+void
+handle_io(command_t c)
+{
+	if (c->input)
+	{
+		int fd = open(c->input, O_RDONLY, 0644);
+		if (fd < 0) return;
+		dup2(fd, 0);
+	}
+
+	if (c->output)
+	{
+		int fd = open(c->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		if (fd < 0) return;
+		dup2(fd, 1);
+	}
+}
+
+void
+execute_simple(command_t c)
+{
+	int p = fork();
+	if (p == 0)
+	{
+		char ** cmd = c->u.word;
+		execvp(cmd[0], cmd);
+		exit(127);								// if command FAILS, manually exit 127
+	}
+	else
+	{
+		int status;
+		waitpid(p, &status, 0);
+		int exit_status = WEXITSTATUS(status);
+		c->status = exit_status;
+		exit(exit_status);
+	}
+}
+
+void
+execute_non_redir(command_t c, enum command_type type)
+{
+	int first_pid = fork();
+	if (first_pid == 0)
+	{
+		execute_helper(c->u.command[0], 0);
+	}
+	else
+	{
+		int status;								// stores not only the exit status, but a lot of other information 											  too.
+												// need to extract bits for exit status, LEAST SIGNIFICANT 8 BITS
+		waitpid(first_pid, &status, 0);					// blocking approach
+		int exit_status = WEXITSTATUS(status);	// gets exit status from status
+		if ( (exit_status == 1 && type != AND_COMMAND) ||
+			 (exit_status == 0 && type != OR_COMMAND) )
+		{
+			int secp = fork();
+			if (secp == 0)
+			{
+				execute_helper(c->u.command[1], 0);
+			}
+			else
+			{
+				int sec_status;
+				waitpid(secp, &sec_status, 0);
+				int sec_exit_status = WEXITSTATUS(sec_status);
+				c->status = sec_exit_status;
+				exit(sec_exit_status);
+			}
+		}
+		else if ( (exit_status == 1 && type == AND_COMMAND) ||
+				  (exit_status == 0 && type == OR_COMMAND) )
+		{
+			c->status = exit_status;
+			exit(exit_status);
+		}
+	}
+}
+
+void
+execute_pipe(command_t c)
+{
+	int fd[2];
+	pipe(fd);
+	int first_pid = fork();
+	if (first_pid == 0)
+	{
+		close(fd[1]);
+		dup2(fd[0], 0);
+		execute_helper(c->u.command[1], 0);
+	}
+	else
+	{
+		int second_pid = fork();
+		if (second_pid == 0)
+		{
+			close(fd[0]);
+			dup2(fd[1], 1);
+			execute_helper(c->u.command[0], 0);
+		}
+		else
+		{
+			close(fd[0]);
+			close(fd[1]);
+			int status;
+			int returned_pid = waitpid(-1, &status, 0);
+			if (returned_pid == second_pid)
+			{
+				waitpid(first_pid, &status, 0);
+				int exit_status = WEXITSTATUS(status);
+				c->u.command[0]->status = exit_status;
+			}
+			if (returned_pid == first_pid)
+			{
+				waitpid(second_pid, &status, 0);
+				int exit_status = WEXITSTATUS(status);
+				c->u.command[1]->status = exit_status;
+			}
+			exit(1);
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int readListSize=1024;
 int writeListSize=1024;
 int readListIndex=0;
@@ -58,208 +269,13 @@ void addToDep(graphNode_t node)
 
 void processCommand(command_t cmd, linkedListNode_t curLinkedListNode);
 
-void
-execute_command (command_t c, bool time_travel)
-{
-//execute_command takes in a command returned by read_command_stream
-//command_t c is the root of a command tree
-	execute_this(c);
 
-
-  //error (1, 0, "command execution not yet implemented");
-}
 int wordLength(char** words)
 {
 	int size=0;
 	if(words)
 		while(words[size]&&words[size][0])size++;
 	return size;
-}
-void execute_this(command_t com)
-{
-	//given pointer to a command
-	//execute that command
-
-	switch (com->type) 
-	{
-		case(SIMPLE_COMMAND):
-		{
-			//printf("com->input is %s\n", com->input);
-			//printf("com->output is %s\n", com->output);
-			int p=fork();
-			if(p==0)
-			{
-				//input
-				if (com->input)
-				{
-					int fd1 = open(com->input, O_RDONLY);
-					if (fd1 < 0)
-						error(1, 0, "could not open input file");
-					int fd2 = 0;
-					int fd_dup = dup2(fd1, fd2);
-					if (fd_dup != 0)
-						error(1, 0, "failed to redirect command input");
-					//execvp(com->u.word[0],com->u.word);
-				}
-				//output
-				if (com->output)
-				{
-					int fd1 = open(com->output, O_CREAT | O_TRUNC | O_WRONLY, 0644);
-					if (fd1 < 0)
-						error(1, 0, "could not open output file");
-					int fd2 = 1;
-					dup2(fd1, fd2);
-					//execvp(com->u.word[0],com->u.word);
-				}
-				//no output or input
-				if (!com->output && !com->input )
-					printf("no input or output");
-				execvp(com->u.word[0],com->u.word);
-				exit(127);
-			}
-			else
-			{
-				int status;
-				waitpid(p,&status,0);
-				int exitStatus=WEXITSTATUS(status);
-				com->status=exitStatus;
-			}
-			break;
-		}
-		case (SEQUENCE_COMMAND):
-		{
-			//execute
-			int p=fork();
-			if(p==0)
-			{
-				execute_this(com->u.command[0]);
-			}
-			else
-			{
-				int status;
-				waitpid(p,&status,0);
-				int exitStatus=WEXITSTATUS(status);
-				execute_this(com->u.command[1]);
-				if(exitStatus==0&&com->u.command[1]->status==0)
-					com->status=0;
-				else
-					com->status=1;
-			}
-			break;
-		}
-		case (OR_COMMAND)://deal with if information is successful
-		{
-			//execute
-			int p=fork();
-			if(p==0)
-			{
-				execute_this(com->u.command[0]);
-			}
-			else
-			{
-				int status;
-				waitpid(p,&status,0);
-				int exitStatus=WEXITSTATUS(status);
-				com->u.command[1]->status=exitStatus;
-				if(exitStatus==1)
-				{
-					execute_this(com->u.command[1]);
-				}
-				if(exitStatus==0||com->u.command[1]->status==0)
-					com->status=0;
-				else
-					com->status=1;
-			}
-			break;
-		}
-		case (AND_COMMAND)://deal with if information is not successful
-		{
-			//execute
-			int p=fork();
-			if(p==0)
-			{
-				execute_this(com->u.command[0]);
-			}
-			else
-			{
-				int status;
-				waitpid(p,&status,0);
-				int exitStatus=WEXITSTATUS(status);
-				if(exitStatus==0)
-				{
-					execute_this(com->u.command[1]);
-				}
-				if(exitStatus==0&&com->u.command[1]->status==0)
-					com->status=0;
-				else
-					com->status=1;
-			}
-			break;
-		}
-		case (PIPE_COMMAND):
-		{
-			//printf("com->input is %s\n", com->input);
-			//printf("com->output is %s\n", com->output);
-			int fd[2];
-			if(pipe(fd)==-1)
-			{
-				error(1, 0, "error in creating pipe");
-			}
-			int firstPid=fork();
-			if(firstPid==-1)
-				error(1, 0, "error in creating fork");
-			if(firstPid==0)
-			{
-				//execute command on right
-				close(fd[1]);
-				dup2(fd[0],0);
-				execute_this(com->u.command[1]);
-				//close(fd[0]);
-			}
-			else
-			{
-				int secondPid=fork();
-				if(secondPid==-1)
-					error(1, 0, "error in creating fork");
-				if(secondPid==0)
-				{
-					//execute command on left
-					close(fd[0]);
-					dup2(fd[1],1);
-					execute_this(com->u.command[0]);
-					//close(fd[1]);
-				}
-				else
-				{
-					close(fd[0]);
-					close(fd[1]);
-					int status;
-					int returnedPid=waitpid(-1,&status,0);
-					if(returnedPid==secondPid)
-					{
-						waitpid(firstPid,&status,0);
-					}
-					if(returnedPid==firstPid)
-					{
-						waitpid(secondPid,&status,0);
-					}
-					int exit=WEXITSTATUS(status);
-					com->status=exit;
-					exit(1);
-				}
-			}
-			break;
-		}
-		case (SUBSHELL_COMMAND):
-		{
-			execute_this(com->u.subshell_command);
-			if(com->u.subshell_command->status==0)
-				com->status=0;
-			else
-				com->status=1;
-			break;
-		}
-	}	
 }
 
 bool checkDependency(linkedListNode_t curNode, linkedListNode_t otherNode)
