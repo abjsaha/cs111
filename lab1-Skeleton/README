@@ -9,168 +9,21 @@ Abhijoy Saha
 004252758
 Discussion 1A
 
+This portion of the project is an extention of our previous execute command function because it supports a some-what 
+parallel execution by keeping track of dependencies between command trees within a command stream. The steps of this 
+partially parallel execution can be broken down into the following steps. First, we process each command tree within 
+the given command stream. By "processing" each command we construct a list of files the command writes to and reads to, 
+stored as a double dimensional char array for the Read List and Write List. Next, we check if each command is dependent 
+on commands that were processed before it by comparing their Read Lists and Write Lists for RAW, WAR, and WAW conditions. 
+Then, we add the command to the global graph's dependencies or no_dependencies list accordingly. When it comes time for 
+execution after all commands are processed, we first execute all commands in the no dependencies list parallelly by 
+iterating through the list in no_dependencies and forking for each command in the list, executing it with the child 
+process by calling execute_command. After all no_dependencies commands are executed, we call executeDependencies. 
+This waits for all commands that a command is dependent on to finish before executing itself. 
 
-
------------------------------------------------
-DISCUSSION WEEK 5 - LAB 1C NOTES
-
-Parallelism
-RAW - echo hello > a.txt, cat a.txt.
-			expect to read after write, but if it's parallel it might read the old value of a.txt
-WAR - cat a.txt, echo hello > a.txt
-WAW - echo hello > a.txt, echo abc > a.txt
-
-If things are executed in parallel, no guarantee it will execute in the expected order.
-In these three cases, we need to worry about dependency between commands.
-
-Need to determine if two commands have dependency. Write a program to automate the process of determining dependency.
-If not dependent, we can run two threads simultaneously without calling waitpid.
-Only required to run two command trees in parallel, not two commands within the same command tree.
-Maintain a Read List (input) and Write List (output) for each command tree
-
-tree 1: echo hello > a.txt
-tree1->READLIST = {hello}
-tree1->WRITELIST = {a.txt}
-
-tree 2: cat a.txt
-tree2->READLIST = {a.txt}
-tree2->WRITELIST = {}
-
-tree1->WL intersect tree2->RL = {a.txt} therefore there is dependency
-
-bool haveDependency (CTree, BTree)
-	if A->WL intersect B->RL = nonempty, then there is dependency
-
-READLIST contains... input fields
-WRITELIST contains... output fields
-
-you're allowed to give false positive because it does not affect correctness
-we do not need to achieve 100% parallelism
-so for each command, we can fill readlist with word[1], word[2]...
-example: echo hello > a.txt , echo a.txt should not be a dependency because echo a.txt is not reading a.txt, it is just 
-printing it out to the screen. it is okay to give this a false positive.
-
-ignore options, don't store in read list
-if word[0][0] == "-"; (then it is an option) ?? 
-
-
-main.c must be modified
-before execute_command, we have to construct a dependency graph to track dependency between nodes
-then when execute_command is called, it will be able to execute properly
-
-construct the graph data structure:
-
-typedef struct {
-	commant_t command;  					//root of command tree
-	struct GraphNode ** before;   //list of nodes that this node is waiting on
-	pid_t pid;										//initialized to -1, pid of process that will execute this command. if -1 then no child has been 
-																//spawn to execute this
-																//if pid >= 0, then a child has already been spawned.
-} GraphNode;
-
-typedef struct{
-	queue* no_dependencies;
-	queue* dependencies;
-} DependencyGraph;
-
-
-
-//uses queue of graph nodes but could use two linked lists or arrays
-
----------------
-psuedo code for building the dependency graph: createGraph (command_stream)
-ultimate goal is to fill in the two data structures we just created: graphNode and DependencyGraph
-
-For each command tree K in the command stream (iterate through stream), do the following:
-STEP ONE: CREATE READ LIST AND WRITE LIST
-		processcommand(k->command); 	//create RL and WL for k's command tree
-STEP TWO: CHECK DEPENDENCIES
-			initialize graphNode to store tree K
-			create a linked list node (new data structure) that contains the graphnode we just created, RL, and WL.
-			insert this linked list node at the head of the linked list 
-			//check if it has dependency with any of the trees procesed before it (rest of the linked list)
-			//iterate through all previous command trees (rest of the linked list)
-			for each previous command tree j (before k):
-				check dependency between j and k by comparing read lists and write lists (WAR, RAW, WAW) which are stored in the linked list
-				if there is dependency between j and k, add j to k's before list
-STEP THREE: BUILD DEPENDENCY GRAPH
-			if the before list is null, add this graph node into the no dependency queue
-			if the before list is not null, add this graph node into the dependency queue
-
-
-
-
-processCommand(command_t command){
-	//generate RL and WL for each command
-	//recursively iterates through command[0] and command[1]
-	if cmd->type == SIMPLE_COMMAND
-		store cmd->input, cmd->u.word[1] into readlist (filter out options)
-		store cmd->output into writelist
-	else if cmd-type == SUBSHELL_COMMAND
-		store cmd->input into readlist
-		store cmd->output into writelist   			//subshell commands have inputs/outputs??
-		processCommand(cmd->u.subshell_command)
-	else 
-		processCommand(cmd->u.command[0]);
-		processCommand(cmd->u. command[1]);
-}
-
-
-
-
-changes in main:
-
-skeleton code: 
-command_t last_command=NULL;
-command_t command;....
-
-//HERE, ADD IF STATEMENT
-if (time_travel){
-	//construct dependency graph
-	DependencyGraph * graph = createGraph(command_stream);
-	int final status = 0;
-	finalstatus = executeGraph(graph);
-	return finalstatus
-}
-else {
-	while (command = read_command_stream....)
-	.
-	.
-	.
-	//skeleton code... (the rest of the skeleton code is moved to the else statement)
-	return print_tree ....
-}
-
-executeGraph(graph):
-	//execute everything in no dependency (spawn child processes)
-	executeNoDependencies(graph->nodependencies);
-	executeDependencies(graph->dependencies);
-
-executeNoDependencies(queue *no_dependencies){
-	for each GraphNode i in nodependencies...
-		pid_t pid = fork();
-		if (pid == 0) {
-			execute_command(i->command,true);
-			exit(?)//doesnt really matter what the exit status is. could be 0
-		}
-		else //parent process
-		{
-			//update pid field of graph node
-			i->pid = pid;
-		}
-} //notice this never calls wait pid
-
-executeDependencies(queue *dependencies){
-	for each GraphNode i in dependencies
-		int status;
-		for each graphnode j in i->before{
-			waitpid(j->pid, &status, 0);
-		}
-		pid_t pid = fork();
-		if (pid ==0){
-			execute_command(i->command);
-			exit(0);
-		}
-}
-
- 
+To our knowledge, our project does not have major limitations, as the functionality of it seems to be working properly. 
+However, a big limitation is the fact that it is only some-what parallel. Only command trees can be executed in parallel, 
+not individual commands within a command tree. So if a command tree is composed of many commands but only one is 
+dependent on a single command in another tree, the entire tree must wait to be executed after the other entire command 
+tree. Overall, this portion of our project helps support faster execution by executing command trees that clearly should 
+not have to wait for other commands, but it does not improve timing drastically because of these limitations. 
